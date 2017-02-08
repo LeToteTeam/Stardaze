@@ -105,6 +105,15 @@ class LTGQLTests: XCTestCase {
         "\n}")
     }
 
+    func testServerRepresentation() {
+        guard let serverRepresentation = fragmentQuery.serverRepresentation() else {
+            XCTFail()
+            fatalError()
+        }
+
+        XCTAssertFalse(serverRepresentation.contains(" \t\n"))
+    }
+
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measure {
