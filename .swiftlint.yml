@@ -1,0 +1,44 @@
+disabled_rules:
+  - cyclomatic_complexity
+  - file_length
+  - function_body_length
+  - function_parameter_count
+  - todo
+  - type_body_length
+  - force_cast
+  - force_try
+  - force_unwrapping
+  - operator_whitespace
+  - valid_docs
+  
+included:
+  - Stardaze
+  - StardazeTests
+
+excluded:
+  - Pods
+
+line_length: 120
+
+type_name:
+  min_length: 2
+  max_length: 50
+
+variable_name:
+  min_length: 1
+  max_length: 50
+
+custom_rules:
+  break_after_opening_brace:
+    included: ".*.swift"
+    name: "Break after opening brace"
+    regex: "\{\n\n"
+    message: New line after opening brace is required.
+    severity: warning
+  
+  broken_empty_braces:
+    included: ".*.swift"
+    name: "Broken empty braces"
+    regex: "\{\s*\n\s*\}"
+    message: Empty braces should be on the same line.
+    severity: warning
