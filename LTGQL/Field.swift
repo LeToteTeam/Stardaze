@@ -21,7 +21,7 @@ public struct Field {
         self.subFields = subFields
     }
 
-    public init(name: String, fragment: Fragment, alias: String? = nil, arguments: [Argument]? = nil) {
+    public init(name: String, alias: String? = nil, arguments: [Argument]? = nil, fragment: Fragment?) {
         self.name = name
         self.fragment = fragment
         self.alias = alias

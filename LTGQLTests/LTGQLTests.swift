@@ -15,7 +15,8 @@ class LTGQLTests: XCTestCase {
                              arguments: [
                                 Argument(key: "maternity", value: .boolean(false)),
                                 Argument(key: "filter_terms", value: .enumeration("pants")),
-                                Argument(key: "string", value: .string("something"))
+                                Argument(key: "string", value: .string("something")),
+                                Argument(key: "options", value: .object(["size":.string("small")]))
                             ], subFields: [
                                 Field(name: "id"),
                                 Field(name: "type"),
@@ -39,10 +40,11 @@ class LTGQLTests: XCTestCase {
 
         let fragment = Fragment(name: "productFields", type: "Product", fields: subFields)
         let query = QueryOperation(fields: [
-                Field(name: "products", fragment: fragment, alias: "productList", arguments: [
+                Field(name: "products", alias: "productList", arguments: [
                     Argument(key: "maternity", value: .boolean(false)),
-                    Argument(key: "filter_terms", value: .enumeration("pants"))
-                    ])
+                    Argument(key: "filter_terms", value: .enumeration("pants")),
+                    Argument(key: "ids", value: .list([.int(1), .int(2)]))
+                    ], fragment: fragment)
                 ])
 
         return Document(queryOperation: query, fragments: [fragment])
@@ -60,19 +62,39 @@ class LTGQLTests: XCTestCase {
         return Document(queryOperation: query)
     }()
 
+    lazy var namedQueryOperationDocument: Document = {
+        let query = QueryOperation(name: "ProductList",
+                                   variableDefinitions: [
+                                    VariableDefinition(key: "limit", type: "Int"),
+                                    VariableDefinition(key: "color", type: "Color")
+            ],
+                                   fields: [
+                                    Field(name: "products",
+                                          alias: "productList",
+                                          arguments: [
+                                            Argument(key: "limit", value: .variable(Variable("limit")))
+                                        ],
+                                          subFields: [
+                                            Field(name: "id"),
+                                            Field(name: "title")
+                                        ])
+            ])
+
+        return Document(queryOperation: query)
+    }()
+
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
 
     func testBasicQuery() {
         XCTAssertEqual(basicDocument.userRepresentation(), "{" +
-            "\n\tproductList: products(maternity: false, filter_terms: pants, string: \"something\") {" +
+            "\n\tproductList: products(maternity: false, filter_terms: pants, " +
+            "string: \"something\", options: {size: \"small\"}) {" +
                 "\n\t\tid" +
                 "\n\t\ttype" +
                 "\n\t\ttitle" +
@@ -89,7 +111,7 @@ class LTGQLTests: XCTestCase {
 
     func testFragmentQuery() {
         XCTAssertEqual(fragmentDocument.userRepresentation(), "{" +
-            "\n\tproductList: products(maternity: false, filter_terms: pants) {" +
+            "\n\tproductList: products(maternity: false, filter_terms: pants, ids: [1,2]) {" +
                 "\n\t\t...productFields" +
             "\n\t}" +
         "\n}" +
@@ -105,6 +127,16 @@ class LTGQLTests: XCTestCase {
         "\n}")
     }
 
+    func testNamedQuery() {
+        XCTAssertEqual(namedQueryOperationDocument.userRepresentation(), "query " +
+            "ProductList($limit: Int, $color: Color) {" +
+                "\n\tproductList: products(limit: $limit) {" +
+                    "\n\t\tid" +
+                    "\n\t\ttitle" +
+                "\n\t}" +
+            "\n}")
+    }
+
     func testServerRepresentation() {
         guard let serverRepresentation = fragmentDocument.serverRepresentation() else {
             XCTFail()
@@ -114,10 +146,21 @@ class LTGQLTests: XCTestCase {
         XCTAssertFalse(serverRepresentation.contains(" \t\n"))
     }
 
-    func testPerformanceExample() {
-        self.measure {
+    func testPerformanceBasicDocutment() {
+        measure {
+            let _ = self.basicDocument.serverRepresentation()
+        }
+    }
+
+    func testPerformanceFragmentDocument() {
+        measure {
             let _ = self.fragmentDocument.serverRepresentation()
         }
     }
 
+    func testPerformanceNamedQueryDocument() {
+        measure {
+            let _ = self.namedQueryOperationDocument.serverRepresentation()
+        }
+    }
 }

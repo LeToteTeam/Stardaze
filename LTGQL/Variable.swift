@@ -8,8 +8,8 @@
 
 public struct Variable {
     internal let key: String
-    
-    public init(key: String) {
+
+    public init(_ key: String) {
         self.key = key
     }
 }

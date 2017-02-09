@@ -17,6 +17,7 @@
 		7BF0BFB41E4BDA3300E56EDE /* Variable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BF0BFB31E4BDA3300E56EDE /* Variable.swift */; };
 		7BF0BFBC1E4BE21600E56EDE /* Value.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BF0BFBB1E4BE21600E56EDE /* Value.swift */; };
 		7BF0BFC01E4BEC4800E56EDE /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BF0BFBF1E4BEC4800E56EDE /* Document.swift */; };
+		7BF0BFC21E4CD67600E56EDE /* VariableDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BF0BFC11E4CD67600E56EDE /* VariableDefinition.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,7 @@
 		7BF0BFB31E4BDA3300E56EDE /* Variable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Variable.swift; sourceTree = "<group>"; };
 		7BF0BFBB1E4BE21600E56EDE /* Value.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Value.swift; sourceTree = "<group>"; };
 		7BF0BFBF1E4BEC4800E56EDE /* Document.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Document.swift; sourceTree = "<group>"; };
+		7BF0BFC11E4CD67600E56EDE /* VariableDefinition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VariableDefinition.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +96,7 @@
 				7BF0BFB31E4BDA3300E56EDE /* Variable.swift */,
 				7BF0BFBB1E4BE21600E56EDE /* Value.swift */,
 				7BF0BFBF1E4BEC4800E56EDE /* Document.swift */,
+				7BF0BFC11E4CD67600E56EDE /* VariableDefinition.swift */,
 			);
 			path = LTGQL;
 			sourceTree = "<group>";
@@ -222,6 +225,7 @@
 			files = (
 				7BF0BFAC1E4B9DE000E56EDE /* QueryOperation.swift in Sources */,
 				7BF0BFB01E4BA41900E56EDE /* Fragment.swift in Sources */,
+				7BF0BFC21E4CD67600E56EDE /* VariableDefinition.swift in Sources */,
 				7BF0BFBC1E4BE21600E56EDE /* Value.swift in Sources */,
 				7BF0BFAE1E4B9E0400E56EDE /* Argument.swift in Sources */,
 				7BF0BFC01E4BEC4800E56EDE /* Document.swift in Sources */,
