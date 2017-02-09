@@ -13,8 +13,9 @@ class LTGQLTests: XCTestCase {
     let productField = Field(name: "products",
                              alias: "productList",
                              arguments: [
-                                Argument(key: "maternity", value: "false"),
-                                Argument(key: "filter_terms", value: "pants")
+                                Argument(key: "maternity", value: .boolean(false)),
+                                Argument(key: "filter_terms", value: .enumeration("pants")),
+                                Argument(key: "string", value: .string("something"))
                             ], subFields: [
                                 Field(name: "id"),
                                 Field(name: "type"),
@@ -24,7 +25,7 @@ class LTGQLTests: XCTestCase {
                                 Field(name: "customer_photos",
                                       alias: "customerPhotos",
                                       arguments: [
-                                        Argument(key: "limit", value: 10)
+                                        Argument(key: "limit", value: .int(10))
                                     ], subFields: [
                                         Field(name: "customer_name")
                                     ])
@@ -39,8 +40,8 @@ class LTGQLTests: XCTestCase {
         let fragment = Fragment(name: "productFields", type: "Product", fields: subFields)
         let query = QueryOperation(fields: [
                 Field(name: "products", fragment: fragment, alias: "productList", arguments: [
-                    Argument(key: "maternity", value: "false"),
-                    Argument(key: "filter_terms", value: "pants")
+                    Argument(key: "maternity", value: .boolean(false)),
+                    Argument(key: "filter_terms", value: .enumeration("pants"))
                     ])
                 ])
 
@@ -71,7 +72,7 @@ class LTGQLTests: XCTestCase {
 
     func testBasicQuery() {
         XCTAssertEqual(basicDocument.userRepresentation(), "{" +
-            "\n\tproductList: products(maternity: false, filter_terms: pants) {" +
+            "\n\tproductList: products(maternity: false, filter_terms: pants, string: \"something\") {" +
                 "\n\t\tid" +
                 "\n\t\ttype" +
                 "\n\t\ttitle" +

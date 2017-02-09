@@ -8,14 +8,14 @@
 
 public struct Argument {
     internal let key: String
-    internal let value: CustomStringConvertible
+    internal let value: Value
 
-    public init(key: String, value: CustomStringConvertible) {
+    public init(key: String, value: Value) {
         self.key = key
         self.value = value
     }
 
     public func userRepresentation() -> String {
-        return "\(key): \(value)"
+        return "\(key): \(Value.extractString(value: value))"
     }
 }

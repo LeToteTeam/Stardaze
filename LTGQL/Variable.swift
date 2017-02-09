@@ -6,7 +6,10 @@
 //  Copyright © 2017 LeTote. All rights reserved.
 //
 
-struct Variable {
-    let key: String
-    let value: Value
+public struct Variable {
+    internal let key: String
+    
+    public init(key: String) {
+        self.key = key
+    }
 }
