@@ -14,7 +14,9 @@ public struct Argument {
         self.key = key
         self.value = value
     }
+}
 
+extension Argument: UserRepresentable {
     public func userRepresentation() -> String {
         return "\(key): \(Value.extractString(value: value))"
     }

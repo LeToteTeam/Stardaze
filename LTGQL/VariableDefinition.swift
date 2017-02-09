@@ -9,13 +9,17 @@
 public struct VariableDefinition {
     internal let key: String
     internal let type: String
+    internal let notNullable: Bool
 
-    public init(key: String, type: String) {
+    public init(key: String, type: String, notNullable: Bool = false) {
         self.key = key
         self.type = type
+        self.notNullable = notNullable
     }
+}
 
-    public func userRepresentatin() -> String {
-        return "$\(key): \(type)"
+extension VariableDefinition: UserRepresentable {
+    public func userRepresentation() -> String {
+        return "$\(key): \(type)\(notNullable ? "!" : "")"
     }
 }

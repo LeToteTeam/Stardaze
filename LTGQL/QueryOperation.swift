@@ -33,14 +33,7 @@ public struct QueryOperation {
 
             if let variableDefinitions = variableDefinitions {
                 finishedString.append("(")
-
-                for (index, variableDefinition) in zip(0..<variableDefinitions.count, variableDefinitions) {
-                    if index != 0 {
-                        finishedString.append(", ")
-                    }
-                    finishedString.append(variableDefinition.userRepresentatin())
-                }
-
+                finishedString.append(variableDefinitions.userRepresentation())
                 finishedString.append(")")
             }
 

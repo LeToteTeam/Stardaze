@@ -7,7 +7,7 @@
 //
 
 public enum Value {
-    case int(Int64)
+    case int(Int32)
     case double(Double)
     case string(String)
     case boolean(Bool)

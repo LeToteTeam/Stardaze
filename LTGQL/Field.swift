@@ -11,21 +11,32 @@ public struct Field {
     internal let alias: String?
     internal let fragment: Fragment?
     internal var arguments: [Argument]?
+    internal var directives: [Directive]?
     internal var subFields: [Field]?
 
-    public init(name: String, alias: String? = nil, arguments: [Argument]? = nil, subFields: [Field]? = nil) {
+    public init(name: String,
+                alias: String? = nil,
+                arguments: [Argument]? = nil,
+                directives: [Directive]? = nil,
+                subFields: [Field]? = nil) {
         self.name = name
         self.alias = alias
         self.fragment = nil
         self.arguments = arguments
+        self.directives = directives
         self.subFields = subFields
     }
 
-    public init(name: String, alias: String? = nil, arguments: [Argument]? = nil, fragment: Fragment?) {
+    public init(name: String,
+                alias: String? = nil,
+                arguments: [Argument]? = nil,
+                directives: [Directive]? = nil,
+                fragment: Fragment?) {
         self.name = name
         self.fragment = fragment
         self.alias = alias
         self.arguments = arguments
+        self.directives = directives
         self.subFields = nil
     }
 
@@ -44,15 +55,13 @@ public struct Field {
 
         if let arguments = arguments, arguments.count > 0 {
             finishedString.append("(")
-            for (index, argument) in zip(0..<arguments.count, arguments) {
-                if index != 0 {
-                    finishedString.append(", ")
-                }
-
-                finishedString.append(argument.userRepresentation())
-            }
-
+            finishedString.append(arguments.userRepresentation())
             finishedString.append(")")
+        }
+        
+        if let directives = directives {
+            finishedString.append(" ")
+            finishedString.append(directives.userRepresentation())
         }
 
         if let fragment = fragment {

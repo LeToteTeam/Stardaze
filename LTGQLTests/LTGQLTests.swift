@@ -17,7 +17,9 @@ class LTGQLTests: XCTestCase {
                                 Argument(key: "filter_terms", value: .enumeration("pants")),
                                 Argument(key: "string", value: .string("something")),
                                 Argument(key: "options", value: .object(["size":.string("small")]))
-                            ], subFields: [
+                            ],
+                             directives: nil,
+                             subFields: [
                                 Field(name: "id"),
                                 Field(name: "type"),
                                 Field(name: "title"),
@@ -30,6 +32,25 @@ class LTGQLTests: XCTestCase {
                                     ], subFields: [
                                         Field(name: "customer_name")
                                     ])
+        ])
+    
+    let fieldWithDirectives = Field(name: "products",
+                                    arguments: nil,
+                                    directives: [.skip(Variable("withProducts"))
+        ],
+                                    subFields: [Field(name: "id"),
+                                                Field(name: "type"),
+                                                Field(name: "customer_photos",
+                                                      alias: "customerPhotos",
+                                                      arguments: [
+                                                        Argument(key: "limit", value: .int(10))],
+                                                      directives: [
+                                                        .skip(Variable("skipPhotos")),
+                                                        .include(Variable("showPhotos"))],
+                                                      subFields: [
+                                                        Field(name: "id"),
+                                                        Field(name: "size")
+                                                    ])
         ])
 
     lazy var fragmentDocument: Document = {
@@ -44,7 +65,9 @@ class LTGQLTests: XCTestCase {
                     Argument(key: "maternity", value: .boolean(false)),
                     Argument(key: "filter_terms", value: .enumeration("pants")),
                     Argument(key: "ids", value: .list([.int(1), .int(2)]))
-                    ], fragment: fragment)
+                    ],
+                      directives: nil,
+                      fragment: fragment)
                 ])
 
         return Document(queryOperation: query, fragments: [fragment])
@@ -80,6 +103,12 @@ class LTGQLTests: XCTestCase {
                                         ])
             ])
 
+        return Document(queryOperation: query)
+    }()
+    
+    lazy var documentWithDirectives: Document = {
+        let query = QueryOperation(fields: [self.fieldWithDirectives])
+        
         return Document(queryOperation: query)
     }()
 
@@ -135,6 +164,19 @@ class LTGQLTests: XCTestCase {
                     "\n\t\ttitle" +
                 "\n\t}" +
             "\n}")
+    }
+    
+    func testFieldsWithDirectives() {
+        XCTAssertEqual(documentWithDirectives.userRepresentation(), "{" +
+            "\n\tproducts @skip(if: $withProducts) {" +
+                "\n\t\tid" +
+                "\n\t\ttype" +
+                "\n\t\tcustomerPhotos: customer_photos(limit: 10) @skip(if: $skipPhotos), @include(if: $showPhotos) {" +
+                    "\n\t\t\tid" +
+                    "\n\t\t\tsize" +
+                "\n\t\t}" +
+            "\n\t}" +
+        "\n}")
     }
 
     func testServerRepresentation() {
