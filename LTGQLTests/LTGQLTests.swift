@@ -30,34 +30,33 @@ class LTGQLTests: XCTestCase {
                                     ])
         ])
 
-    lazy var fragmentQuery: Query = {
+    lazy var fragmentDocument: Document = {
         guard let subFields = self.productField.subFields else {
             XCTFail()
             fatalError()
         }
 
         let fragment = Fragment(name: "productFields", type: "Product", fields: subFields)
-
-        return Query(fields: [
-            Field(name: "products", fragment: fragment, alias: "productList", arguments: [
-                Argument(key: "maternity", value: "false"),
-                Argument(key: "filter_terms", value: "pants")
+        let query = QueryOperation(fields: [
+                Field(name: "products", fragment: fragment, alias: "productList", arguments: [
+                    Argument(key: "maternity", value: "false"),
+                    Argument(key: "filter_terms", value: "pants")
+                    ])
                 ])
-            ],
-                     fragments: [
-                        fragment
-            ])
+
+        return Document(queryOperation: query, fragments: [fragment])
     }()
 
-    lazy var basicQuery: Query = {
-        Query(fields: [
-            self.productField,
-            Field(name: "custom_collections",
-                  arguments: nil,
-                  subFields: [
-                    Field(name: "count")
+    lazy var basicDocument: Document = {
+        let query = QueryOperation(fields: [
+                self.productField,
+                Field(name: "custom_collections",
+                      arguments: nil,
+                      subFields: [
+                        Field(name: "count")
+                    ])
                 ])
-            ])
+        return Document(queryOperation: query)
     }()
 
     override func setUp() {
@@ -71,7 +70,7 @@ class LTGQLTests: XCTestCase {
     }
 
     func testBasicQuery() {
-        XCTAssertEqual(basicQuery.userRepresentation(), "{" +
+        XCTAssertEqual(basicDocument.userRepresentation(), "{" +
             "\n\tproductList: products(maternity: false, filter_terms: pants) {" +
                 "\n\t\tid" +
                 "\n\t\ttype" +
@@ -88,7 +87,7 @@ class LTGQLTests: XCTestCase {
     }
 
     func testFragmentQuery() {
-        XCTAssertEqual(fragmentQuery.userRepresentation(), "{" +
+        XCTAssertEqual(fragmentDocument.userRepresentation(), "{" +
             "\n\tproductList: products(maternity: false, filter_terms: pants) {" +
                 "\n\t\t...productFields" +
             "\n\t}" +
@@ -106,7 +105,7 @@ class LTGQLTests: XCTestCase {
     }
 
     func testServerRepresentation() {
-        guard let serverRepresentation = fragmentQuery.serverRepresentation() else {
+        guard let serverRepresentation = fragmentDocument.serverRepresentation() else {
             XCTFail()
             fatalError()
         }
@@ -115,9 +114,8 @@ class LTGQLTests: XCTestCase {
     }
 
     func testPerformanceExample() {
-        // This is an example of a performance test case.
         self.measure {
-            // Put the code you want to measure the time of here.
+            let _ = self.fragmentDocument.serverRepresentation()
         }
     }
 
