@@ -13,10 +13,10 @@ extension Array where Element:UserRepresentable {
             if index != 0 {
                 string.append(", ")
             }
-            
+
             string.append(element.userRepresentation())
         }
-        
+
         return string
     }
 }

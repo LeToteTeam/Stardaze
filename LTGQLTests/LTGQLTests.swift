@@ -33,7 +33,7 @@ class LTGQLTests: XCTestCase {
                                         Field(name: "customer_name")
                                     ])
         ])
-    
+
     let fieldWithDirectives = Field(name: "products",
                                     arguments: nil,
                                     directives: [.skip(Variable("withProducts"))
@@ -59,7 +59,8 @@ class LTGQLTests: XCTestCase {
             fatalError()
         }
 
-        let fragment = Fragment(name: "productFields", type: "Product", fields: subFields)
+        let fragment1 = Fragment(name: "productFields", type: "Product", fields: subFields)
+        let fragment2 = Fragment(name: "productAdditionalFields", type: "Product", fields: [Field(name: "snow")])
         let query = QueryOperation(fields: [
                 Field(name: "products", alias: "productList", arguments: [
                     Argument(key: "maternity", value: .boolean(false)),
@@ -67,10 +68,10 @@ class LTGQLTests: XCTestCase {
                     Argument(key: "ids", value: .list([.int(1), .int(2)]))
                     ],
                       directives: nil,
-                      fragment: fragment)
+                      fragments: [fragment1, fragment2])
                 ])
 
-        return Document(queryOperation: query, fragments: [fragment])
+        return Document(queryOperation: query, fragments: [fragment1, fragment2])
     }()
 
     lazy var basicDocument: Document = {
@@ -105,10 +106,10 @@ class LTGQLTests: XCTestCase {
 
         return Document(queryOperation: query)
     }()
-    
+
     lazy var documentWithDirectives: Document = {
         let query = QueryOperation(fields: [self.fieldWithDirectives])
-        
+
         return Document(queryOperation: query)
     }()
 
@@ -142,6 +143,7 @@ class LTGQLTests: XCTestCase {
         XCTAssertEqual(fragmentDocument.userRepresentation(), "{" +
             "\n\tproductList: products(maternity: false, filter_terms: pants, ids: [1,2]) {" +
                 "\n\t\t...productFields" +
+                "\n\t\t...productAdditionalFields" +
             "\n\t}" +
         "\n}" +
         "\n" +
@@ -153,6 +155,10 @@ class LTGQLTests: XCTestCase {
             "\n\tcustomerPhotos: customer_photos(limit: 10) {" +
                 "\n\t\tcustomer_name" +
             "\n\t}" +
+        "\n}" +
+        "\n" +
+        "\nfragment productAdditionalFields on Product {" +
+            "\n\tsnow" +
         "\n}")
     }
 
@@ -165,7 +171,7 @@ class LTGQLTests: XCTestCase {
                 "\n\t}" +
             "\n}")
     }
-    
+
     func testFieldsWithDirectives() {
         XCTAssertEqual(documentWithDirectives.userRepresentation(), "{" +
             "\n\tproducts @skip(if: $withProducts) {" +

@@ -9,7 +9,7 @@
 public struct Field {
     internal let name: String
     internal let alias: String?
-    internal let fragment: Fragment?
+    internal let fragments: [Fragment]?
     internal var arguments: [Argument]?
     internal var directives: [Directive]?
     internal var subFields: [Field]?
@@ -21,7 +21,7 @@ public struct Field {
                 subFields: [Field]? = nil) {
         self.name = name
         self.alias = alias
-        self.fragment = nil
+        self.fragments = nil
         self.arguments = arguments
         self.directives = directives
         self.subFields = subFields
@@ -31,9 +31,9 @@ public struct Field {
                 alias: String? = nil,
                 arguments: [Argument]? = nil,
                 directives: [Directive]? = nil,
-                fragment: Fragment?) {
+                fragments: [Fragment]?) {
         self.name = name
-        self.fragment = fragment
+        self.fragments = fragments
         self.alias = alias
         self.arguments = arguments
         self.directives = directives
@@ -58,17 +58,19 @@ public struct Field {
             finishedString.append(arguments.userRepresentation())
             finishedString.append(")")
         }
-        
+
         if let directives = directives {
             finishedString.append(" ")
             finishedString.append(directives.userRepresentation())
         }
 
-        if let fragment = fragment {
+        if let fragments = fragments {
             finishedString.append(" {\n")
-            finishedString.append(fragment.userRepresentation(depth: depth + 1))
 
-            finishedString.append("\n")
+            for fragment in fragments {
+                finishedString.append(fragment.userRepresentation(depth: depth + 1))
+                finishedString.append("\n")
+            }
 
             for _ in 0..<depth {
                 finishedString.append("\t")
