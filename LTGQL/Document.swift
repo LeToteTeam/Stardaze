@@ -7,11 +7,13 @@
 //
 
 public struct Document {
-    // TODO: The spec is vague about how to handle multiple queries as of October 2016.
+    internal let fragments: [Fragment]?
+
+    // TODO: The spec is vague about how to handle multiple queries as of October 2016, 
+    // https://github.com/facebook/graphql/tree/master/spec
     // When this is updated in the spec and the implementations begin to support it,
     // we will need to add support as well.
     internal let queryOperation: QueryOperation
-    internal let fragments: [Fragment]?
 
     public init(queryOperation: QueryOperation, fragments: [Fragment]? = nil) {
         self.queryOperation = queryOperation

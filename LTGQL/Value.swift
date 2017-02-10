@@ -7,14 +7,14 @@
 //
 
 public enum Value {
-    case int(Int32)
-    case double(Double)
-    case string(String)
     case boolean(Bool)
-    case null
+    case double(Double)
     case enumeration(String)
+    case int(Int32)
     indirect case list([Value])
+    case null
     indirect case object([String: Value])
+    case string(String)
     case variable(Variable)
 
     static func extractString(value: Value) -> String {

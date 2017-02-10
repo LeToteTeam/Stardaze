@@ -8,8 +8,8 @@
 
 public struct VariableDefinition {
     internal let key: String
-    internal let type: String
     internal let notNullable: Bool
+    internal let type: String
 
     public init(key: String, type: String, notNullable: Bool = false) {
         self.key = key

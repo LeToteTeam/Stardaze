@@ -10,29 +10,23 @@ import XCTest
 @testable import LTGQL
 
 class LTGQLTests: XCTestCase {
-    let productField = Field(name: "products",
-                             alias: "productList",
-                             arguments: [
-                                Argument(key: "maternity", value: .boolean(false)),
-                                Argument(key: "filter_terms", value: .enumeration("pants")),
-                                Argument(key: "string", value: .string("something")),
-                                Argument(key: "options", value: .object(["size":.string("small")]))
-                            ],
-                             directives: nil,
-                             subFields: [
-                                Field(name: "id"),
-                                Field(name: "type"),
-                                Field(name: "title"),
-                                Field(name: "title",
-                                      alias: "aliasedTitle"),
-                                Field(name: "customer_photos",
-                                      alias: "customerPhotos",
-                                      arguments: [
-                                        Argument(key: "limit", value: .int(10))
-                                    ], subFields: [
-                                        Field(name: "customer_name")
-                                    ])
-        ])
+    lazy var basicDocument: Document = {
+        let query = QueryOperation(fields: [
+                self.productField,
+                Field(name: "custom_collections",
+                      arguments: nil,
+                      subFields: [
+                        Field(name: "count")
+                    ])
+                ])
+        return Document(queryOperation: query)
+    }()
+
+    lazy var documentWithDirectives: Document = {
+        let query = QueryOperation(fields: [self.fieldWithDirectives])
+
+        return Document(queryOperation: query)
+    }()
 
     let fieldWithDirectives = Field(name: "products",
                                     arguments: nil,
@@ -74,18 +68,6 @@ class LTGQLTests: XCTestCase {
         return Document(queryOperation: query, fragments: [fragment1, fragment2])
     }()
 
-    lazy var basicDocument: Document = {
-        let query = QueryOperation(fields: [
-                self.productField,
-                Field(name: "custom_collections",
-                      arguments: nil,
-                      subFields: [
-                        Field(name: "count")
-                    ])
-                ])
-        return Document(queryOperation: query)
-    }()
-
     lazy var namedQueryOperationDocument: Document = {
         let query = QueryOperation(name: "ProductList",
                                    variableDefinitions: [
@@ -107,11 +89,29 @@ class LTGQLTests: XCTestCase {
         return Document(queryOperation: query)
     }()
 
-    lazy var documentWithDirectives: Document = {
-        let query = QueryOperation(fields: [self.fieldWithDirectives])
-
-        return Document(queryOperation: query)
-    }()
+    let productField = Field(name: "products",
+                             alias: "productList",
+                             arguments: [
+                                Argument(key: "maternity", value: .boolean(false)),
+                                Argument(key: "filter_terms", value: .enumeration("pants")),
+                                Argument(key: "string", value: .string("something")),
+                                Argument(key: "options", value: .object(["size":.string("small")]))
+                            ],
+                             directives: nil,
+                             subFields: [
+                                Field(name: "id"),
+                                Field(name: "type"),
+                                Field(name: "title"),
+                                Field(name: "title",
+                                      alias: "aliasedTitle"),
+                                Field(name: "customer_photos",
+                                      alias: "customerPhotos",
+                                      arguments: [
+                                        Argument(key: "limit", value: .int(10))
+                                    ], subFields: [
+                                        Field(name: "customer_name")
+                                    ])
+        ])
 
     override func setUp() {
         super.setUp()
@@ -137,6 +137,19 @@ class LTGQLTests: XCTestCase {
                 "\n\t\tcount" +
             "\n\t}" +
     "\n}")
+    }
+
+    func testFieldsWithDirectives() {
+        XCTAssertEqual(documentWithDirectives.userRepresentation(), "{" +
+            "\n\tproducts @skip(if: $withProducts) {" +
+                "\n\t\tid" +
+                "\n\t\ttype" +
+                "\n\t\tcustomerPhotos: customer_photos(limit: 10) @skip(if: $skipPhotos), @include(if: $showPhotos) {" +
+                    "\n\t\t\tid" +
+                    "\n\t\t\tsize" +
+                "\n\t\t}" +
+            "\n\t}" +
+        "\n}")
     }
 
     func testFragmentQuery() {
@@ -172,29 +185,7 @@ class LTGQLTests: XCTestCase {
             "\n}")
     }
 
-    func testFieldsWithDirectives() {
-        XCTAssertEqual(documentWithDirectives.userRepresentation(), "{" +
-            "\n\tproducts @skip(if: $withProducts) {" +
-                "\n\t\tid" +
-                "\n\t\ttype" +
-                "\n\t\tcustomerPhotos: customer_photos(limit: 10) @skip(if: $skipPhotos), @include(if: $showPhotos) {" +
-                    "\n\t\t\tid" +
-                    "\n\t\t\tsize" +
-                "\n\t\t}" +
-            "\n\t}" +
-        "\n}")
-    }
-
-    func testServerRepresentation() {
-        guard let serverRepresentation = fragmentDocument.serverRepresentation() else {
-            XCTFail()
-            fatalError()
-        }
-
-        XCTAssertFalse(serverRepresentation.contains(" \t\n"))
-    }
-
-    func testPerformanceBasicDocutment() {
+    func testPerformanceBasicDocument() {
         measure {
             let _ = self.basicDocument.serverRepresentation()
         }
@@ -210,5 +201,14 @@ class LTGQLTests: XCTestCase {
         measure {
             let _ = self.namedQueryOperationDocument.serverRepresentation()
         }
+    }
+
+    func testServerRepresentation() {
+        guard let serverRepresentation = fragmentDocument.serverRepresentation() else {
+            XCTFail()
+            fatalError()
+        }
+
+        XCTAssertFalse(serverRepresentation.contains(" \t\n"))
     }
 }

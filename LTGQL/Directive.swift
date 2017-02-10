@@ -7,8 +7,8 @@
 //
 
 public enum Directive {
-    case skip(Variable)
     case include(Variable)
+    case skip(Variable)
 }
 
 extension Directive: UserRepresentable {

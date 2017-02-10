@@ -7,9 +7,9 @@
 //
 
 public struct Fragment {
+    internal let fields: [Field]
     internal let name: String
     internal let type: String
-    internal let fields: [Field]
 
     public init(name: String, type: String, fields: [Field]) {
         self.name = name

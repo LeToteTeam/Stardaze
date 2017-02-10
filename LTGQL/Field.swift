@@ -7,11 +7,11 @@
 //
 
 public struct Field {
-    internal let name: String
     internal let alias: String?
-    internal let fragments: [Fragment]?
     internal var arguments: [Argument]?
     internal var directives: [Directive]?
+    internal let fragments: [Fragment]?
+    internal let name: String
     internal var subFields: [Field]?
 
     public init(name: String,

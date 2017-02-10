@@ -93,19 +93,19 @@
 		7B71DC2E1E4A856A0081790A /* LTGQL */ = {
 			isa = PBXGroup;
 			children = (
-				7B71DC2F1E4A856A0081790A /* LTGQL.h */,
-				7B71DC301E4A856A0081790A /* Info.plist */,
-				7B71DC461E4A85990081790A /* Field.swift */,
-				7BF0BFAB1E4B9DE000E56EDE /* QueryOperation.swift */,
 				7BF0BFAD1E4B9E0400E56EDE /* Argument.swift */,
-				7BF0BFAF1E4BA41900E56EDE /* Fragment.swift */,
-				7BF0BFB31E4BDA3300E56EDE /* Variable.swift */,
-				7BF0BFBB1E4BE21600E56EDE /* Value.swift */,
-				7BF0BFBF1E4BEC4800E56EDE /* Document.swift */,
-				7BF0BFC11E4CD67600E56EDE /* VariableDefinition.swift */,
-				7BF0BFC31E4CF32D00E56EDE /* Directive.swift */,
-				7BF0BFC51E4CF94A00E56EDE /* UserRepresentable.swift */,
 				7BF0BFC71E4CF99C00E56EDE /* ArrayExtension.swift */,
+				7BF0BFC31E4CF32D00E56EDE /* Directive.swift */,
+				7BF0BFBF1E4BEC4800E56EDE /* Document.swift */,
+				7B71DC461E4A85990081790A /* Field.swift */,
+				7BF0BFAF1E4BA41900E56EDE /* Fragment.swift */,
+				7B71DC301E4A856A0081790A /* Info.plist */,
+				7B71DC2F1E4A856A0081790A /* LTGQL.h */,
+				7BF0BFAB1E4B9DE000E56EDE /* QueryOperation.swift */,
+				7BF0BFC51E4CF94A00E56EDE /* UserRepresentable.swift */,
+				7BF0BFBB1E4BE21600E56EDE /* Value.swift */,
+				7BF0BFB31E4BDA3300E56EDE /* Variable.swift */,
+				7BF0BFC11E4CD67600E56EDE /* VariableDefinition.swift */,
 			);
 			path = LTGQL;
 			sourceTree = "<group>";
