@@ -40,7 +40,7 @@ class LTGQLTests: XCTestCase {
                                                         Argument(key: "limit", value: .int(10))],
                                                       directives: [
                                                         .skip(Variable("skipPhotos")),
-                                                        .include(Variable("showPhotos"))],
+                                                        .deprecated(Variable("deprecationReason"))],
                                                       subFields: [
                                                         Field(name: "id"),
                                                         Field(name: "size")
@@ -144,7 +144,8 @@ class LTGQLTests: XCTestCase {
             "\n\tproducts @skip(if: $withProducts) {" +
                 "\n\t\tid" +
                 "\n\t\ttype" +
-                "\n\t\tcustomerPhotos: customer_photos(limit: 10) @skip(if: $skipPhotos), @include(if: $showPhotos) {" +
+                "\n\t\tcustomerPhotos: customer_photos(limit: 10) @skip(if: $skipPhotos), " +
+                "@deprecated(reason: $deprecationReason) {" +
                     "\n\t\t\tid" +
                     "\n\t\t\tsize" +
                 "\n\t\t}" +
