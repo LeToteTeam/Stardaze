@@ -7,8 +7,8 @@
 //
 
 public struct Argument {
-    internal let key: String
-    internal let value: Value
+    fileprivate let key: String
+    fileprivate let value: Value
 
     public init(key: String, value: Value) {
         self.key = key

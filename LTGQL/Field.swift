@@ -7,37 +7,61 @@
 //
 
 public struct Field {
-    internal let alias: String?
-    internal var arguments: [Argument]?
-    internal var directives: [Directive]?
-    internal let fragments: [Fragment]?
-    internal let name: String
-    internal var subFields: [Field]?
+    private let alias: String?
+    private var arguments: [Argument]?
+    private var directives: [Directive]?
+    private var fragments: [Fragment]?
+    private let name: String
+    private var subFields: [Field]?
 
     public init(name: String,
                 alias: String? = nil,
                 arguments: [Argument]? = nil,
                 directives: [Directive]? = nil,
-                subFields: [Field]? = nil) {
+                subFields: [Field]? = nil,
+                fragments: [Fragment]? = nil) {
         self.name = name
         self.alias = alias
-        self.fragments = nil
+        self.fragments = fragments
         self.arguments = arguments
         self.directives = directives
         self.subFields = subFields
     }
 
-    public init(name: String,
-                alias: String? = nil,
-                arguments: [Argument]? = nil,
-                directives: [Directive]? = nil,
-                fragments: [Fragment]?) {
-        self.name = name
-        self.fragments = fragments
-        self.alias = alias
-        self.arguments = arguments
-        self.directives = directives
-        self.subFields = nil
+    public mutating func append(argument: Argument) {
+        guard let _ = arguments else {
+            arguments = [argument]
+            return
+        }
+
+        arguments?.append(argument)
+    }
+
+    public mutating func append(directive: Directive) {
+        guard let _ = directives else {
+            directives = [directive]
+            return
+        }
+
+        directives?.append(directive)
+    }
+
+    public mutating func append(fragment: Fragment) {
+        guard let _ = fragments else {
+            fragments = [fragment]
+            return
+        }
+
+        fragments?.append(fragment)
+    }
+
+    public mutating func append(subField: Field) {
+        guard let _ = subFields else {
+            subFields = [subField]
+            return
+        }
+
+        subFields?.append(subField)
     }
 
     public func userRepresentation(depth: Int) -> String {
@@ -64,24 +88,21 @@ public struct Field {
             finishedString.append(directives.userRepresentation())
         }
 
-        if let fragments = fragments {
+        if subFields != nil || fragments != nil {
             finishedString.append(" {\n")
 
-            for fragment in fragments {
-                finishedString.append(fragment.userRepresentation(depth: depth + 1))
-                finishedString.append("\n")
+            if let subFields = subFields {
+                for field in subFields {
+                    finishedString.append(field.userRepresentation(depth: depth + 1))
+                    finishedString.append("\n")
+                }
             }
 
-            for _ in 0..<depth {
-                finishedString.append("\t")
-            }
-
-            finishedString.append("}")
-        } else if let subFields = subFields, subFields.count > 0 {
-            finishedString.append(" {\n")
-            for field in subFields {
-                finishedString.append(field.userRepresentation(depth: depth + 1))
-                finishedString.append("\n")
+            if let fragments = fragments {
+                for fragment in fragments {
+                    finishedString.append(fragment.userRepresentation(depth: depth + 1))
+                    finishedString.append("\n")
+                }
             }
 
             for _ in 0..<depth {

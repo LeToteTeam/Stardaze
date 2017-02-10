@@ -7,9 +7,9 @@
 //
 
 public struct QueryOperation {
-    internal var fields: [Field]
-    internal var name: String?
-    internal var variableDefinitions: [VariableDefinition]?
+    private var fields: [Field]
+    private var name: String?
+    private var variableDefinitions: [VariableDefinition]?
 
     public init(fields: [Field]) {
         self.fields = fields
@@ -21,6 +21,19 @@ public struct QueryOperation {
         self.name = name
         self.fields = fields
         self.variableDefinitions = variableDefinitions
+    }
+
+    public mutating func append(field: Field) {
+        fields.append(field)
+    }
+
+    public mutating func append(variableDefinition: VariableDefinition) {
+        guard var variableDefinitions = variableDefinitions else {
+            self.variableDefinitions = [variableDefinition]
+            return
+        }
+
+        variableDefinitions.append(variableDefinition)
     }
 
     public func userRepresentation() -> String {

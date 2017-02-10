@@ -10,14 +10,14 @@ public enum Value {
     case boolean(Bool)
     case double(Double)
     case enumeration(String)
-    case int(Int32)
+    case int(Int64)
     indirect case list([Value])
     case null
     indirect case object([String: Value])
     case string(String)
     case variable(Variable)
 
-    static func extractString(value: Value) -> String {
+    public static func extractString(value: Value) -> String {
         switch value {
         case int(let int):
             return "\(int)"
@@ -40,12 +40,12 @@ public enum Value {
         }
     }
 
-    static func extractList(list: [Value]) -> String {
+    private static func extractList(list: [Value]) -> String {
         var finishedString = "["
 
         for (index, value) in zip(0..<list.count, list) {
             if index != 0 {
-                finishedString.append(",")
+                finishedString.append(", ")
             }
             finishedString.append(extractString(value: value))
         }
@@ -55,12 +55,12 @@ public enum Value {
         return finishedString
     }
 
-    static func extractObject(object: [String: Value]) -> String {
+    private static func extractObject(object: [String: Value]) -> String {
         var finishedString = "{"
 
         for (index, pair) in object.enumerated() {
             if index != 0 {
-                finishedString.append(",")
+                finishedString.append(", ")
             }
 
             finishedString.append("\(pair.key): \(extractString(value: pair.value))")

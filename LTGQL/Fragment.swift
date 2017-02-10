@@ -7,14 +7,18 @@
 //
 
 public struct Fragment {
-    internal let fields: [Field]
-    internal let name: String
-    internal let type: String
+    private var fields: [Field]
+    private let name: String
+    private let type: String
 
     public init(name: String, type: String, fields: [Field]) {
         self.name = name
         self.type = type
         self.fields = fields
+    }
+
+    public mutating func append(field: Field) {
+        fields.append(field)
     }
 
     public func userRepresentation(depth: Int) -> String {

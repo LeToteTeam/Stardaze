@@ -8,9 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		7B71DC361E4A856A0081790A /* LTGQL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B71DC2C1E4A856A0081790A /* LTGQL.framework */; };
-		7B71DC3B1E4A856A0081790A /* LTGQLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B71DC3A1E4A856A0081790A /* LTGQLTests.swift */; };
 		7B71DC3D1E4A856A0081790A /* LTGQL.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B71DC2F1E4A856A0081790A /* LTGQL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7B71DC471E4A85990081790A /* Field.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B71DC461E4A85990081790A /* Field.swift */; };
+		7B906DFF1E4E4371006C0337 /* DocumentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B906DFE1E4E4371006C0337 /* DocumentTests.swift */; };
+		7B906E011E4E4429006C0337 /* QueryOperationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B906E001E4E4429006C0337 /* QueryOperationTests.swift */; };
+		7B906E031E4E55E3006C0337 /* FieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B906E021E4E55E3006C0337 /* FieldTests.swift */; };
+		7B906E051E4E56A2006C0337 /* FragmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B906E041E4E56A2006C0337 /* FragmentTests.swift */; };
+		7B906E071E4E65E0006C0337 /* ArgumentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B906E061E4E65E0006C0337 /* ArgumentTests.swift */; };
+		7B906E091E4E66E2006C0337 /* ValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B906E081E4E66E2006C0337 /* ValueTests.swift */; };
+		7B906E0B1E4E6D88006C0337 /* VariableDefinitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B906E0A1E4E6D88006C0337 /* VariableDefinitionTests.swift */; };
+		7B906E0D1E4E6E5F006C0337 /* DirectiveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B906E0C1E4E6E5F006C0337 /* DirectiveTests.swift */; };
 		7BF0BFAC1E4B9DE000E56EDE /* QueryOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BF0BFAB1E4B9DE000E56EDE /* QueryOperation.swift */; };
 		7BF0BFAE1E4B9E0400E56EDE /* Argument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BF0BFAD1E4B9E0400E56EDE /* Argument.swift */; };
 		7BF0BFB01E4BA41900E56EDE /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BF0BFAF1E4BA41900E56EDE /* Fragment.swift */; };
@@ -38,9 +45,16 @@
 		7B71DC2F1E4A856A0081790A /* LTGQL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LTGQL.h; sourceTree = "<group>"; };
 		7B71DC301E4A856A0081790A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7B71DC351E4A856A0081790A /* LTGQLTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LTGQLTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		7B71DC3A1E4A856A0081790A /* LTGQLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LTGQLTests.swift; sourceTree = "<group>"; };
 		7B71DC3C1E4A856A0081790A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7B71DC461E4A85990081790A /* Field.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Field.swift; sourceTree = "<group>"; };
+		7B906DFE1E4E4371006C0337 /* DocumentTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DocumentTests.swift; sourceTree = "<group>"; };
+		7B906E001E4E4429006C0337 /* QueryOperationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryOperationTests.swift; sourceTree = "<group>"; };
+		7B906E021E4E55E3006C0337 /* FieldTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FieldTests.swift; sourceTree = "<group>"; };
+		7B906E041E4E56A2006C0337 /* FragmentTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FragmentTests.swift; sourceTree = "<group>"; };
+		7B906E061E4E65E0006C0337 /* ArgumentTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArgumentTests.swift; sourceTree = "<group>"; };
+		7B906E081E4E66E2006C0337 /* ValueTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValueTests.swift; sourceTree = "<group>"; };
+		7B906E0A1E4E6D88006C0337 /* VariableDefinitionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VariableDefinitionTests.swift; sourceTree = "<group>"; };
+		7B906E0C1E4E6E5F006C0337 /* DirectiveTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectiveTests.swift; sourceTree = "<group>"; };
 		7BF0BFAB1E4B9DE000E56EDE /* QueryOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryOperation.swift; sourceTree = "<group>"; };
 		7BF0BFAD1E4B9E0400E56EDE /* Argument.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Argument.swift; sourceTree = "<group>"; };
 		7BF0BFAF1E4BA41900E56EDE /* Fragment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fragment.swift; sourceTree = "<group>"; };
@@ -113,8 +127,15 @@
 		7B71DC391E4A856A0081790A /* LTGQLTests */ = {
 			isa = PBXGroup;
 			children = (
-				7B71DC3A1E4A856A0081790A /* LTGQLTests.swift */,
 				7B71DC3C1E4A856A0081790A /* Info.plist */,
+				7B906DFE1E4E4371006C0337 /* DocumentTests.swift */,
+				7B906E001E4E4429006C0337 /* QueryOperationTests.swift */,
+				7B906E021E4E55E3006C0337 /* FieldTests.swift */,
+				7B906E041E4E56A2006C0337 /* FragmentTests.swift */,
+				7B906E061E4E65E0006C0337 /* ArgumentTests.swift */,
+				7B906E081E4E66E2006C0337 /* ValueTests.swift */,
+				7B906E0A1E4E6D88006C0337 /* VariableDefinitionTests.swift */,
+				7B906E0C1E4E6E5F006C0337 /* DirectiveTests.swift */,
 			);
 			path = LTGQLTests;
 			sourceTree = "<group>";
@@ -250,7 +271,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7B71DC3B1E4A856A0081790A /* LTGQLTests.swift in Sources */,
+				7B906DFF1E4E4371006C0337 /* DocumentTests.swift in Sources */,
+				7B906E0D1E4E6E5F006C0337 /* DirectiveTests.swift in Sources */,
+				7B906E051E4E56A2006C0337 /* FragmentTests.swift in Sources */,
+				7B906E011E4E4429006C0337 /* QueryOperationTests.swift in Sources */,
+				7B906E0B1E4E6D88006C0337 /* VariableDefinitionTests.swift in Sources */,
+				7B906E031E4E55E3006C0337 /* FieldTests.swift in Sources */,
+				7B906E071E4E65E0006C0337 /* ArgumentTests.swift in Sources */,
+				7B906E091E4E66E2006C0337 /* ValueTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

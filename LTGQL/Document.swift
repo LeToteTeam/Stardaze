@@ -7,17 +7,26 @@
 //
 
 public struct Document {
-    internal let fragments: [Fragment]?
+    private var fragments: [Fragment]?
 
     // TODO: The spec is vague about how to handle multiple queries as of October 2016, 
     // https://github.com/facebook/graphql/tree/master/spec
     // When this is updated in the spec and the implementations begin to support it,
     // we will need to add support as well.
-    internal let queryOperation: QueryOperation
+    private let queryOperation: QueryOperation
 
     public init(queryOperation: QueryOperation, fragments: [Fragment]? = nil) {
         self.queryOperation = queryOperation
         self.fragments = fragments
+    }
+
+    public mutating func append(fragment: Fragment) {
+        guard let _ = fragments else {
+            fragments = [fragment]
+            return
+        }
+
+        fragments?.append(fragment)
     }
 
     public func userRepresentation() -> String {

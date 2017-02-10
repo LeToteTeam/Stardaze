@@ -13,7 +13,7 @@ public enum Directive {
 }
 
 extension Directive: UserRepresentable {
-    func userRepresentation() -> String {
+    public func userRepresentation() -> String {
         switch self {
         case .deprecated(let variable):
             return "@deprecated(reason: $\(variable.key))"
