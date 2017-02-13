@@ -47,6 +47,17 @@ final class FieldTests: XCTestCase {
                         "\n}")
     }
 
+    func testAppendingMultipleArguments() {
+        var copy = testField
+
+        copy.append(arguments: [
+            Argument(key: "id", value: .int(5)),
+            Argument(key: "color", value: .enumeration("brown"))
+            ])
+
+        XCTAssertEqual(copy.userRepresentation(depth: 0), "test_field(id: 5, color: brown)")
+    }
+
     func testDirectives() {
         var copy = testField
         copy.append(directive: .include(Variable("testVar")))
@@ -69,6 +80,18 @@ final class FieldTests: XCTestCase {
                        "test_field(id: 5) @include(if: $testVar), @deprecated(reason: $deprecationReason) {" +
                             "\n\tid" +
                         "\n}")
+    }
+
+    func testAppendingMultipleDirectives() {
+        var copy = testField
+
+        copy.append(directives: [
+            .skip(Variable("testVar")),
+            .deprecated(Variable("deprecationReason"))
+            ])
+
+        XCTAssertEqual(copy.userRepresentation(depth: 0), "test_field @skip(if: $testVar), " +
+            "@deprecated(reason: $deprecationReason)")
     }
 
     func testFragments() {
@@ -99,6 +122,36 @@ final class FieldTests: XCTestCase {
                             "\n\t}" +
                             "\n\t...testFragment" +
                             "\n\t...titleFragment" +
+                        "\n}")
+    }
+
+    func testAppendingMultipleFragments() {
+        var copy = testField
+
+        copy.append(fragments: [
+            Fragment(name: "testFragment", type: "TestObject", fields: [Field(name: "id")]),
+            Fragment(name: "titleFragment", type: "TestObject", fields: [Field(name: "title")])
+            ])
+
+        XCTAssertEqual(copy.userRepresentation(depth: 0),
+                       "test_field {" +
+                            "\n\t...testFragment" +
+                            "\n\t...titleFragment" +
+                        "\n}")
+    }
+
+    func testAppendingMultipleFields() {
+        var copy = testField
+
+        copy.append(subFields: [
+            Field(name: "id"),
+            Field(name: "title")
+            ])
+
+        XCTAssertEqual(copy.userRepresentation(depth: 0),
+                       "test_field {" +
+                            "\n\tid" +
+                            "\n\ttitle" +
                         "\n}")
     }
 }

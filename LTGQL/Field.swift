@@ -37,6 +37,15 @@ public struct Field {
         arguments?.append(argument)
     }
 
+    public mutating func append(arguments: [Argument]) {
+        guard let _ = self.arguments else {
+            self.arguments = arguments
+            return
+        }
+
+        self.arguments?.append(contentsOf: arguments)
+    }
+
     public mutating func append(directive: Directive) {
         guard let _ = directives else {
             directives = [directive]
@@ -44,6 +53,15 @@ public struct Field {
         }
 
         directives?.append(directive)
+    }
+
+    public mutating func append(directives: [Directive]) {
+        guard let _ = self.directives else {
+            self.directives = directives
+            return
+        }
+
+        self.directives?.append(contentsOf: directives)
     }
 
     public mutating func append(fragment: Fragment) {
@@ -55,6 +73,15 @@ public struct Field {
         fragments?.append(fragment)
     }
 
+    public mutating func append(fragments: [Fragment]) {
+        guard let _ = self.fragments else {
+            self.fragments = fragments
+            return
+        }
+
+        self.fragments?.append(contentsOf: fragments)
+    }
+
     public mutating func append(subField: Field) {
         guard let _ = subFields else {
             subFields = [subField]
@@ -62,6 +89,15 @@ public struct Field {
         }
 
         subFields?.append(subField)
+    }
+
+    public mutating func append(subFields: [Field]) {
+        guard let _ = self.subFields else {
+            self.subFields = subFields
+            return
+        }
+
+        self.subFields?.append(contentsOf: subFields)
     }
 
     public func userRepresentation(depth: Int) -> String {

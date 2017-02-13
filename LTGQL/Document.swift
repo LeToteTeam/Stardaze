@@ -29,6 +29,14 @@ public struct Document {
         fragments?.append(fragment)
     }
 
+    public mutating func append(fragments: [Fragment]) {
+        guard let _ = self.fragments else {
+            self.fragments = fragments
+            return
+        }
+        self.fragments?.append(contentsOf: fragments)
+    }
+
     public func userRepresentation() -> String {
         var finishedString = queryOperation.userRepresentation()
         if let fragments = fragments {
@@ -45,9 +53,14 @@ public struct Document {
     // Although the algorithm used to escape is an Apple black box, https://github.com/apple/swift
     // it should behave similarly to https://en.wikipedia.org/wiki/Percent-encoding
     // one notable difference being that Apple does not use '+' but rather %20 for ' '.
-    public func serverRepresentation() -> String? {
+    public func encodedRepresentation() -> String {
         let allowedCharacters = CharacterSet(charactersIn:
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~")
-        return userRepresentation().addingPercentEncoding(withAllowedCharacters: allowedCharacters)
+
+        guard let string = userRepresentation().addingPercentEncoding(withAllowedCharacters: allowedCharacters) else {
+            return ""
+        }
+
+        return string
     }
 }

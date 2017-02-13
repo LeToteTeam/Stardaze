@@ -31,6 +31,23 @@ final class QueryOperationTests: XCTestCase {
                                 "\n\t\tid" +
                             "\n\t}" +
                         "\n}")
+
+        query.append(fields: [
+            Field(name: "title"),
+            Field(name: "name")
+            ])
+
+        XCTAssertEqual(query.userRepresentation(),
+                       "{" +
+                            "\n\tproducts {" +
+                                "\n\t\tid" +
+                            "\n\t}," +
+                            "\n\tcustom_collections {" +
+                                "\n\t\tid" +
+                            "\n\t}," +
+                            "\n\ttitle," +
+                            "\n\tname" +
+                        "\n}")
     }
 
     func testNamed() {
@@ -53,5 +70,30 @@ final class QueryOperationTests: XCTestCase {
                         "\n\t}" +
             "\n}")
 
+        query.append(variableDefinitions: [
+            VariableDefinition(key: "limit", type: "Int"),
+            VariableDefinition(key: "color", type: "Enum")
+            ])
+
+        XCTAssertEqual(query.userRepresentation(),
+                       "query ProductList($count: Int, $limit: Int, $color: Enum) {" +
+                        "\n\tproducts {" +
+                        "\n\t\tid" +
+                        "\n\t}" +
+            "\n}")
+
+        query.append(fields: [
+            Field(name: "title"),
+            Field(name: "name")
+            ])
+
+        XCTAssertEqual(query.userRepresentation(),
+                       "query ProductList($count: Int, $limit: Int, $color: Enum) {" +
+                        "\n\tproducts {" +
+                        "\n\t\tid" +
+                        "\n\t}," +
+                        "\n\ttitle," +
+                        "\n\tname" +
+            "\n}")
     }
 }

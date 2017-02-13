@@ -27,6 +27,10 @@ public struct QueryOperation {
         fields.append(field)
     }
 
+    public mutating func append(fields: [Field]) {
+        self.fields.append(contentsOf: fields)
+    }
+
     public mutating func append(variableDefinition: VariableDefinition) {
         guard var variableDefinitions = variableDefinitions else {
             self.variableDefinitions = [variableDefinition]
@@ -34,6 +38,15 @@ public struct QueryOperation {
         }
 
         variableDefinitions.append(variableDefinition)
+    }
+
+    public mutating func append(variableDefinitions: [VariableDefinition]) {
+        guard let _ = self.variableDefinitions else {
+            self.variableDefinitions = variableDefinitions
+            return
+        }
+
+        self.variableDefinitions?.append(contentsOf: variableDefinitions)
     }
 
     public func userRepresentation() -> String {

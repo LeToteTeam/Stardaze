@@ -21,6 +21,10 @@ public struct Fragment {
         fields.append(field)
     }
 
+    public mutating func append(fields: [Field]) {
+        self.fields.append(contentsOf: fields)
+    }
+
     public func userRepresentation(depth: Int) -> String {
         var finishedString = ""
 

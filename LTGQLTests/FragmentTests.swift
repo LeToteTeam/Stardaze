@@ -23,7 +23,7 @@ final class FragmentTests: XCTestCase {
                         "\n}")
     }
 
-    func testAddingFields() {
+    func testAppendFields() {
         var copy = testFragment
         copy.append(field: Field(name: "customer_photos", alias: "customerPhotos", subFields: [
             Field(name: "small_url")
@@ -37,6 +37,27 @@ final class FragmentTests: XCTestCase {
                             "\n\tcustomerPhotos: customer_photos {" +
                                 "\n\t\tsmall_url" +
                             "\n\t}" +
+                        "\n}")
+    }
+
+    func testAppendMultipleFields() {
+        var copy = testFragment
+        copy.append(fields: [
+            Field(name: "customer_photos", alias: "customerPhotos", subFields: [
+                Field(name: "small_url")
+                ]),
+            Field(name: "title")
+            ])
+
+        XCTAssertEqual(copy.userRepresentation(depth: 0), "...testFragment")
+
+        XCTAssertEqual(copy.userDefinitionRepresentation(),
+                       "fragment testFragment on TestObject {" +
+                            "\n\tid" +
+                            "\n\tcustomerPhotos: customer_photos {" +
+                                "\n\t\tsmall_url" +
+                            "\n\t}" +
+                            "\n\ttitle" +
                         "\n}")
     }
 }
