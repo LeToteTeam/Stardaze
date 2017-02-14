@@ -10,8 +10,13 @@ import LTGQL
 import XCTest
 
 final class VariableDefinitionTests: XCTestCase {
-    func testUserRepresentation() {
-        XCTAssertEqual(VariableDefinition(key: "testVar", type: "TestObject", notNullable: true).userRepresentation(),
-                       "$testVar: TestObject!")
+    func testRepresentations() {
+        let definition = VariableDefinition(key: "testString",
+                                            type: "String",
+                                            notNullable: true,
+                                            value: .string("Hello!"))
+
+        XCTAssertEqual(definition.userRepresentation(), "$testString: String!")
+        XCTAssertEqual(definition.valueRepresentation(), "\"testString\": \"Hello!\"")
     }
 }

@@ -61,7 +61,7 @@ final class QueryOperationTests: XCTestCase {
                             "\n\t}" +
                         "\n}")
 
-        query.append(variableDefinition: VariableDefinition(key: "count", type: "Int"))
+        query.append(variableDefinition: VariableDefinition(key: "count", type: "Int", value: .int(10)))
 
         XCTAssertEqual(query.userRepresentation(),
                        "query ProductList($count: Int) {" +
@@ -70,9 +70,11 @@ final class QueryOperationTests: XCTestCase {
                         "\n\t}" +
             "\n}")
 
+        XCTAssertEqual(query.valueRepresentations(), "{\"count\": 10}")
+
         query.append(variableDefinitions: [
-            VariableDefinition(key: "limit", type: "Int"),
-            VariableDefinition(key: "color", type: "Enum")
+            VariableDefinition(key: "limit", type: "Int", value: .int(10)),
+            VariableDefinition(key: "color", type: "Enum", value: .enumeration("blue"))
             ])
 
         XCTAssertEqual(query.userRepresentation(),
@@ -81,6 +83,8 @@ final class QueryOperationTests: XCTestCase {
                         "\n\t\tid" +
                         "\n\t}" +
             "\n}")
+
+        XCTAssertEqual(query.valueRepresentations(), "{\"count\": 10, \"limit\": 10, \"color\": blue}")
 
         query.append(fields: [
             Field(name: "title"),

@@ -1,7 +1,12 @@
-# LTGQL
+# Gorilla Query Language
 ## A Swift GraphQL Serializer
 
-LTGQL was born out of a need to create GraphQL queries in a typesafe way in Swift applications. View the GraphQL spec [here](https://facebook.github.io/graphql).
+Gorilla Query Language was born out of a need to create GraphQL queries in a typesafe way in Swift applications.
+View the GraphQL spec [here](https://facebook.github.io/graphql).
+
+### Approaching this Libray:
+The best way to start if you are unfamiliar with GraphQL is by looking at `Field`. From there, move on to 
+`QueryOperation` and `Document`.
 
 ### Example Usage:
 
@@ -27,6 +32,6 @@ print(document.userRepresenation())
 // }
 
 print(document.encodedRepresentation())
-// %7B%0A%09productList%3A%20product_list%28is_awesome%3A%20true%29%20%7B%0A%09%09id%0A%09%09title%0A%09%7D%0A%7D
+// query=%7B%0A%09productList%3A%20product_list%28is_awesome%3A%20true%29%20%7B%0A%09%09id%0A%09%09title%0A%09%7D%0A%7D
 
 ```

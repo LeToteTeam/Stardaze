@@ -6,20 +6,35 @@
 //  Copyright © 2017 LeTote. All rights reserved.
 //
 
+/**
+ The core GraphQL object. The encoded representation of a query operation should be obtained from this class after the
+ query operation has been formed and all fragments have been added. A user readable representation may also be obtained
+ from here.
+ */
 public struct Document {
     private var fragments: [Fragment]?
-
-    // TODO: The spec is vague about how to handle multiple queries as of October 2016, 
-    // https://github.com/facebook/graphql/tree/master/spec
-    // When this is updated in the spec and the implementations begin to support it,
-    // we will need to add support as well.
     private let queryOperation: QueryOperation
 
+    /**
+     The primary initializer. The query operation should be fully formed before passing it in here.
+     Fragments may be added after initialization.
+     
+     - parameter queryOperation: The operation that will be returned by the server. Although the GraphQL spec recognizes
+        multiple operations, the description of how they will be treated is vague.
+     
+     - parameter fragments: The fragments that will form the description section of the document. All fragments that are
+        used in the query operation should be included here.
+     */
     public init(queryOperation: QueryOperation, fragments: [Fragment]? = nil) {
         self.queryOperation = queryOperation
         self.fragments = fragments
     }
 
+    /**
+     Appends a single fragment to be listed in the fragment definitions.
+     
+     - parameter fragment: The fragment to appear in the list.
+     */
     public mutating func append(fragment: Fragment) {
         guard let _ = fragments else {
             fragments = [fragment]
@@ -29,6 +44,11 @@ public struct Document {
         fragments?.append(fragment)
     }
 
+    /**
+     Appends multiple fragments to be listed in the fragment definitions.
+     
+     - parameter fragments: A list of fragments to appear in the list.
+     */
     public mutating func append(fragments: [Fragment]) {
         guard let _ = self.fragments else {
             self.fragments = fragments
@@ -37,30 +57,47 @@ public struct Document {
         self.fragments?.append(contentsOf: fragments)
     }
 
+    /**
+     A stringified version of the document. This string is human readable with spaces and tabs.
+     */
     public func userRepresentation() -> String {
         var finishedString = queryOperation.userRepresentation()
-        if let fragments = fragments {
+        if let fragments = fragments, fragments.count > 0 {
             for fragment in fragments {
                 finishedString.append("\n\n")
                 finishedString.append(fragment.userDefinitionRepresentation())
             }
         }
 
+        if let values = queryOperation.valueRepresentations() {
+            finishedString.append("\n")
+
+            finishedString.append(values)
+        }
+
         return finishedString
     }
 
-    // Percent escapes values as specified in RFC 3986, https://tools.ietf.org/html/rfc2396#page-9
-    // Although the algorithm used to escape is an Apple black box, https://github.com/apple/swift
-    // it should behave similarly to https://en.wikipedia.org/wiki/Percent-encoding
-    // one notable difference being that Apple does not use '+' but rather %20 for ' '.
+    /**
+     Percent escapes values as specified in RFC 3986, [here](https://tools.ietf.org/html/rfc2396#page-9)
+     View more information about percent-encoding [here](https://en.wikipedia.org/wiki/Percent-encoding)
+     */
     public func encodedRepresentation() -> String {
         let allowedCharacters = CharacterSet(charactersIn:
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~")
 
-        guard let string = userRepresentation().addingPercentEncoding(withAllowedCharacters: allowedCharacters) else {
+        guard let queryString = userRepresentation().addingPercentEncoding(withAllowedCharacters:
+            allowedCharacters) else {
             return ""
         }
 
-        return string
+        guard let operationName = queryOperation.nameRepresentation()?.addingPercentEncoding(withAllowedCharacters:
+            allowedCharacters),
+            let variables = queryOperation.valueRepresentations()?.addingPercentEncoding(withAllowedCharacters:
+                allowedCharacters) else {
+            return "query=\(queryString)"
+        }
+
+        return "query=\(queryString)&operationName=\(operationName)&variables=\(variables)"
     }
 }
