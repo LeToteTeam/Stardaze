@@ -13,14 +13,16 @@
  */
 public struct QueryOperation {
     private var fields: [Field]
+    private var mutating: Bool
     private var name: String?
     private var variableDefinitions: [VariableDefinition]?
 
     /**
      A secondary initializer for unnamed queries, which cannot contain variables.
      */
-    public init(fields: [Field]) {
+    public init(mutating: Bool = false, fields: [Field]) {
         self.fields = fields
+        self.mutating = mutating
         name = nil
         variableDefinitions = nil
     }
@@ -29,14 +31,18 @@ public struct QueryOperation {
      The primary initializer.
      
      - parameter name: The name of the query.
-     
+     - parameter mutating: Specifies that the operation is a mutation.
      - parameter variableDefinitions: Definitions of all variables that will appear in fields listed under the 
      operation.
      
      - parameter fields: The fields that should appear on the operation.
      */
-    public init(name: String, variableDefinitions: [VariableDefinition]? = nil, fields: [Field]) {
+    public init(name: String,
+                variableDefinitions: [VariableDefinition]? = nil,
+                mutating: Bool = false,
+                fields: [Field]) {
         self.name = name
+        self.mutating = mutating
         self.fields = fields
         self.variableDefinitions = variableDefinitions
     }
@@ -101,7 +107,7 @@ public struct QueryOperation {
         var finishedString = ""
 
         if let name = name {
-            finishedString.append("query ")
+            finishedString.append(mutating ? "mutation " : "query ")
 
             finishedString.append(name)
 

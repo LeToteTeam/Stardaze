@@ -100,4 +100,56 @@ final class QueryOperationTests: XCTestCase {
                         "\n\tname" +
             "\n}")
     }
+
+    func testMutation() {
+        var mutation = QueryOperation(name: "ProductList",
+                                      mutating: true,
+                                      fields: [Field(name: "products", subFields: [Field(name: "id")])])
+
+        XCTAssertEqual(mutation.userRepresentation(),
+                       "mutation ProductList {" +
+                        "\n\tproducts {" +
+                        "\n\t\tid" +
+                        "\n\t}" +
+            "\n}")
+
+        mutation.append(variableDefinition: VariableDefinition(key: "count", type: "Int", value: .int(10)))
+
+        XCTAssertEqual(mutation.userRepresentation(),
+                       "mutation ProductList($count: Int) {" +
+                        "\n\tproducts {" +
+                        "\n\t\tid" +
+                        "\n\t}" +
+            "\n}")
+
+        XCTAssertEqual(mutation.valueRepresentations(), "{\"count\": 10}")
+
+        mutation.append(variableDefinitions: [
+            VariableDefinition(key: "limit", type: "Int", value: .int(10)),
+            VariableDefinition(key: "color", type: "Enum", value: .enumeration("blue"))
+            ])
+
+        XCTAssertEqual(mutation.userRepresentation(),
+                       "mutation ProductList($count: Int, $limit: Int, $color: Enum) {" +
+                        "\n\tproducts {" +
+                        "\n\t\tid" +
+                        "\n\t}" +
+            "\n}")
+
+        XCTAssertEqual(mutation.valueRepresentations(), "{\"count\": 10, \"limit\": 10, \"color\": blue}")
+
+        mutation.append(fields: [
+            Field(name: "title"),
+            Field(name: "name")
+            ])
+
+        XCTAssertEqual(mutation.userRepresentation(),
+                       "mutation ProductList($count: Int, $limit: Int, $color: Enum) {" +
+                        "\n\tproducts {" +
+                        "\n\t\tid" +
+                        "\n\t}," +
+                        "\n\ttitle," +
+                        "\n\tname" +
+            "\n}")
+    }
 }
