@@ -73,7 +73,7 @@ class DocumentTests: XCTestCase {
                            fields: [Field(name: "id")]))
 
         XCTAssertEqual(namedDocument.encodedRepresentation(),
-            "query=query%20ProductList%28%24count%3A%20Int%29%20%7B%0A%09id%0A%7D%0A%7B%22count%22%3A%2010%7D&" +
-            "operationName=ProductList&variables=%7B%22count%22%3A%2010%7D")
+            "query=query%20ProductList($count:%20Int)%20%7B%0A%09id%0A%7D%0A%7B%22count%22:%2010%7D&" +
+            "operationName=ProductList&variables=%7B%22count%22:%2010%7D")
     }
 }

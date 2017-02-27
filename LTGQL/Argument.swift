@@ -7,7 +7,7 @@
 //
 
 /**
- Arguments are used to pass in additional information in fields related to filtering or sorting.
+ Arguments are used to pass in additional information in fields, typically related to filtering or sorting.
  */
 public struct Argument {
     fileprivate let key: String

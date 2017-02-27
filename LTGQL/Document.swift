@@ -79,22 +79,18 @@ public struct Document {
     }
 
     /**
-     Percent escapes values as specified in RFC 3986, [here](https://tools.ietf.org/html/rfc2396#page-9)
-     View more information about percent-encoding [here](https://en.wikipedia.org/wiki/Percent-encoding)
+     A percent encoded representation of the document ready for placement in a url query.
      */
     public func encodedRepresentation() -> String {
-        let allowedCharacters = CharacterSet(charactersIn:
-            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~")
-
         guard let queryString = userRepresentation().addingPercentEncoding(withAllowedCharacters:
-            allowedCharacters) else {
+            CharacterSet.urlQueryAllowed) else {
             return ""
         }
 
         guard let operationName = queryOperation.nameRepresentation()?.addingPercentEncoding(withAllowedCharacters:
-            allowedCharacters),
+            CharacterSet.urlQueryAllowed),
             let variables = queryOperation.valueRepresentations()?.addingPercentEncoding(withAllowedCharacters:
-                allowedCharacters) else {
+                CharacterSet.urlQueryAllowed) else {
             return "query=\(queryString)"
         }
 
