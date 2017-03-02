@@ -65,7 +65,7 @@ class DocumentTests: XCTestCase {
         unnamedDocument.append(fragment: Fragment(name: "idFragment", type: "Product", fields: [Field(name: "id")]))
 
         XCTAssertEqual(unnamedDocument.encodedRepresentation(),
-                       "query=%7B%0A%09products%0A%7D%0A%0Afragment%20idFragment%20on%20Product%20%7B%0A%09id%0A%7D")
+                       "query=%7B%20products%20%7D%20fragment%20idFragment%20on%20Product%20%7B%20id%20%7D")
 
         let namedDocument = Document(queryOperation:
             QueryOperation(name: "ProductList",
@@ -73,7 +73,7 @@ class DocumentTests: XCTestCase {
                            fields: [Field(name: "id")]))
 
         XCTAssertEqual(namedDocument.encodedRepresentation(),
-            "query=query%20ProductList($count:%20Int)%20%7B%0A%09id%0A%7D%0A%7B%22count%22:%2010%7D&" +
+            "query=query%20ProductList($count:%20Int)%20%7B%20id%20%7D%20%7B%22count%22:%2010%7D&" +
             "operationName=ProductList&variables=%7B%22count%22:%2010%7D")
     }
 }

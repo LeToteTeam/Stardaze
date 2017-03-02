@@ -14,6 +14,9 @@
 public struct Document {
     private var fragments: [Fragment]?
     private let queryOperation: QueryOperation
+    private let whitespaceRegexp: NSRegularExpression? = {
+        return try? NSRegularExpression(pattern: "[ \t\n]+", options: [])
+    }()
 
     /**
      The primary initializer. The query operation should be fully formed before passing it in here.
@@ -82,18 +85,41 @@ public struct Document {
      A percent encoded representation of the document ready for placement in a url query.
      */
     public func encodedRepresentation() -> String {
-        guard let queryString = userRepresentation().addingPercentEncoding(withAllowedCharacters:
+        guard let regexp = whitespaceRegexp else {
+            return ""
+        }
+
+        let transformedQuery = NSMutableString(string: userRepresentation().replacingOccurrences(of: ",", with: ""))
+
+        regexp.replaceMatches(in: transformedQuery,
+                              options: [],
+                              range: transformedQuery.range(of: transformedQuery as String),
+                              withTemplate: " ")
+
+        guard let queryString = transformedQuery.addingPercentEncoding(withAllowedCharacters:
             CharacterSet.urlQueryAllowed) else {
             return ""
         }
 
         guard let operationName = queryOperation.nameRepresentation()?.addingPercentEncoding(withAllowedCharacters:
             CharacterSet.urlQueryAllowed),
-            let variables = queryOperation.valueRepresentations()?.addingPercentEncoding(withAllowedCharacters:
-                CharacterSet.urlQueryAllowed) else {
+            let variablesMinusCommas = queryOperation.valueRepresentations()?.replacingOccurrences(of: ",",
+                                                                                                   with: "") else {
             return "query=\(queryString)"
         }
 
-        return "query=\(queryString)&operationName=\(operationName)&variables=\(variables)"
+        let transformedVariables = NSMutableString(string: variablesMinusCommas)
+
+        regexp.replaceMatches(in: transformedVariables,
+                              options: [],
+                              range: transformedVariables.range(of: transformedVariables as String),
+                              withTemplate: " ")
+
+        guard let variablesString =
+            transformedVariables.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) else {
+            return "query=\(queryString)"
+        }
+
+        return "query=\(queryString)&operationName=\(operationName)&variables=\(variablesString)"
     }
 }
