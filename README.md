@@ -1,7 +1,7 @@
-# Gorilla Query Language
+# Stardaze
 ## A Swift GraphQL Serializer
 
-Gorilla Query Language was born out of a need to create GraphQL queries in a typesafe way in Swift applications.
+Stardaze was born out of a need to create GraphQL queries in a typesafe way in Swift applications.
 View the GraphQL spec [here](https://facebook.github.io/graphql).
 
 ### Approaching this Libray:
