@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:LTGQL.xcodeproj">
+      location = "self:/Users/williamwilson/Stardaze/Stardaze.xcodeproj">
    </FileRef>
 </Workspace>

@@ -12,8 +12,8 @@ disabled_rules:
   - valid_docs
   
 included:
-  - LTGQL
-  - LTGQLTests
+  - Stardaze
+  - StardazeTests
 
 excluded:
   - Pods

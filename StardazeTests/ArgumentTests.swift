@@ -1,12 +1,12 @@
 //
 //  ArgumentTests.swift
-//  LTGQL
+//  Stardaze
 //
 //  Created by William Wilson on 2/10/17.
 //  Copyright © 2017 LeTote. All rights reserved.
 //
 
-import LTGQL
+import Stardaze
 import XCTest
 
 final class ArgumentTests: XCTestCase {
