@@ -10,14 +10,11 @@ import Stardaze
 import XCTest
 
 final class FragmentTests: XCTestCase {
-    let testFragment: Fragment = Fragment(name: "testFragment", type: "TestObject", fields: [Field(name: "id")])
-
-    func testUserRepresentation() {
-        XCTAssertEqual(testFragment.userRepresentation(depth: 3), "\t\t\t...testFragment")
-    }
+    let readablePrinter = ReadablePrinter()
+    let testFragment = Fragment(name: "testFragment", type: "TestObject", fields: [Field(name: "id")])
 
     func testUserDefinitionRepresentation() {
-        XCTAssertEqual(testFragment.userDefinitionRepresentation(),
+        XCTAssertEqual(testFragment.accept(visitor: readablePrinter),
                        "fragment testFragment on TestObject {" +
                             "\n\tid" +
                         "\n}")
@@ -29,11 +26,9 @@ final class FragmentTests: XCTestCase {
             Field(name: "small_url")
             ]))
 
-        XCTAssertEqual(copy.userRepresentation(depth: 0), "...testFragment")
-
-        XCTAssertEqual(copy.userDefinitionRepresentation(),
+        XCTAssertEqual(copy.accept(visitor: readablePrinter),
                        "fragment testFragment on TestObject {" +
-                            "\n\tid" +
+                            "\n\tid," +
                             "\n\tcustomerPhotos: customer_photos {" +
                                 "\n\t\tsmall_url" +
                             "\n\t}" +
@@ -49,14 +44,12 @@ final class FragmentTests: XCTestCase {
             Field(name: "title")
             ])
 
-        XCTAssertEqual(copy.userRepresentation(depth: 0), "...testFragment")
-
-        XCTAssertEqual(copy.userDefinitionRepresentation(),
+        XCTAssertEqual(copy.accept(visitor: readablePrinter),
                        "fragment testFragment on TestObject {" +
-                            "\n\tid" +
+                            "\n\tid," +
                             "\n\tcustomerPhotos: customer_photos {" +
                                 "\n\t\tsmall_url" +
-                            "\n\t}" +
+                            "\n\t}," +
                             "\n\ttitle" +
                         "\n}")
     }

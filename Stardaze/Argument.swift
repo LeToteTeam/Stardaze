@@ -10,8 +10,8 @@
  Arguments are used to pass in additional information in fields, typically related to filtering or sorting.
  */
 public struct Argument {
-    fileprivate let key: String
-    fileprivate let value: Value
+    internal let key: String
+    internal let value: Value
 
     /**
      The primary initialzer.
@@ -24,13 +24,11 @@ public struct Argument {
         self.key = key
         self.value = value
     }
-}
 
-extension Argument: UserRepresentable {
     /**
-     A stringified version of the argument. This is used internally and it may also be used for debugging.
+     Accept a visitor
      */
-    public func userRepresentation() -> String {
-        return "\(key): \(Value.extractString(value: value))"
+    public func accept<T>(visitor: Visitor<T>) -> T {
+        return visitor.visit(argument: self)
     }
 }

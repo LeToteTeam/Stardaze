@@ -10,20 +10,21 @@ import Stardaze
 import XCTest
 
 final class FieldTests: XCTestCase {
+    let readablePrinter = ReadablePrinter()
     let testField = Field(name: "test_field")
 
     func testUserRepresentation() {
-        XCTAssertEqual(testField.userRepresentation(depth: 3), "\t\t\ttest_field")
+        XCTAssertEqual(testField.accept(visitor: readablePrinter), "test_field")
     }
 
     func testAlias() {
         var field = Field(name: "test_field", alias: "testField")
 
-        XCTAssertEqual(field.userRepresentation(depth: 0), "testField: test_field")
+        XCTAssertEqual(field.accept(visitor: readablePrinter), "testField: test_field")
 
         field.append(subField: Field(name: "id"))
 
-        XCTAssertEqual(field.userRepresentation(depth: 0),
+        XCTAssertEqual(field.accept(visitor: readablePrinter),
                        "testField: test_field {" +
                             "\n\tid" +
                         "\n}")
@@ -33,15 +34,15 @@ final class FieldTests: XCTestCase {
         var copy = testField
         copy.append(argument: Argument(key: "id", value: .int(5)))
 
-        XCTAssertEqual(copy.userRepresentation(depth: 0), "test_field(id: 5)")
+        XCTAssertEqual(copy.accept(visitor: readablePrinter), "test_field(id: 5)")
 
         copy.append(argument: Argument(key: "color", value: .enumeration("brown")))
 
-        XCTAssertEqual(copy.userRepresentation(depth: 0), "test_field(id: 5, color: brown)")
+        XCTAssertEqual(copy.accept(visitor: readablePrinter), "test_field(id: 5, color: brown)")
 
         copy.append(subField: Field(name: "id"))
 
-        XCTAssertEqual(copy.userRepresentation(depth: 0),
+        XCTAssertEqual(copy.accept(visitor: readablePrinter),
                        "test_field(id: 5, color: brown) {" +
                             "\n\tid" +
                         "\n}")
@@ -55,28 +56,28 @@ final class FieldTests: XCTestCase {
             Argument(key: "color", value: .enumeration("brown"))
             ])
 
-        XCTAssertEqual(copy.userRepresentation(depth: 0), "test_field(id: 5, color: brown)")
+        XCTAssertEqual(copy.accept(visitor: readablePrinter), "test_field(id: 5, color: brown)")
     }
 
     func testDirectives() {
         var copy = testField
         copy.append(directive: .include(Variable("testVar")))
 
-        XCTAssertEqual(copy.userRepresentation(depth: 0), "test_field @include(if: $testVar)")
+        XCTAssertEqual(copy.accept(visitor: readablePrinter), "test_field @include(if: $testVar)")
 
         copy.append(directive: .deprecated(Variable("deprecationReason")))
 
-        XCTAssertEqual(copy.userRepresentation(depth: 0), "test_field @include(if: $testVar), " +
+        XCTAssertEqual(copy.accept(visitor: readablePrinter), "test_field @include(if: $testVar), " +
             "@deprecated(reason: $deprecationReason)")
 
         copy.append(argument: Argument(key: "id", value: .int(5)))
 
-        XCTAssertEqual(copy.userRepresentation(depth: 0), "test_field(id: 5) @include(if: $testVar), " +
+        XCTAssertEqual(copy.accept(visitor: readablePrinter), "test_field(id: 5) @include(if: $testVar), " +
             "@deprecated(reason: $deprecationReason)")
 
         copy.append(subField: Field(name: "id"))
 
-        XCTAssertEqual(copy.userRepresentation(depth: 0),
+        XCTAssertEqual(copy.accept(visitor: readablePrinter),
                        "test_field(id: 5) @include(if: $testVar), @deprecated(reason: $deprecationReason) {" +
                             "\n\tid" +
                         "\n}")
@@ -90,7 +91,7 @@ final class FieldTests: XCTestCase {
             .deprecated(Variable("deprecationReason"))
             ])
 
-        XCTAssertEqual(copy.userRepresentation(depth: 0), "test_field @skip(if: $testVar), " +
+        XCTAssertEqual(copy.accept(visitor: readablePrinter), "test_field @skip(if: $testVar), " +
             "@deprecated(reason: $deprecationReason)")
     }
 
@@ -98,16 +99,16 @@ final class FieldTests: XCTestCase {
         var copy = testField
         copy.append(fragment: Fragment(name: "testFragment", type: "TestObject", fields: [Field(name: "id")]))
 
-        XCTAssertEqual(copy.userRepresentation(depth: 0),
+        XCTAssertEqual(copy.accept(visitor: readablePrinter),
                        "test_field {" +
                             "\n\t...testFragment" +
                         "\n}")
 
         copy.append(fragment: Fragment(name: "titleFragment", type: "TestObject", fields: [Field(name: "title")]))
 
-        XCTAssertEqual(copy.userRepresentation(depth: 0),
+        XCTAssertEqual(copy.accept(visitor: readablePrinter),
                        "test_field {" +
-                            "\n\t...testFragment" +
+                            "\n\t...testFragment," +
                             "\n\t...titleFragment" +
                         "\n}")
 
@@ -115,12 +116,12 @@ final class FieldTests: XCTestCase {
             Field(name: "medium_url")
             ]))
 
-        XCTAssertEqual(copy.userRepresentation(depth: 0),
+        XCTAssertEqual(copy.accept(visitor: readablePrinter),
                        "test_field {" +
                             "\n\tcustomer_photos {" +
                                 "\n\t\tmedium_url" +
-                            "\n\t}" +
-                            "\n\t...testFragment" +
+                            "\n\t}," +
+                            "\n\t...testFragment," +
                             "\n\t...titleFragment" +
                         "\n}")
     }
@@ -133,9 +134,9 @@ final class FieldTests: XCTestCase {
             Fragment(name: "titleFragment", type: "TestObject", fields: [Field(name: "title")])
             ])
 
-        XCTAssertEqual(copy.userRepresentation(depth: 0),
+        XCTAssertEqual(copy.accept(visitor: readablePrinter),
                        "test_field {" +
-                            "\n\t...testFragment" +
+                            "\n\t...testFragment," +
                             "\n\t...titleFragment" +
                         "\n}")
     }
@@ -148,9 +149,9 @@ final class FieldTests: XCTestCase {
             Field(name: "title")
             ])
 
-        XCTAssertEqual(copy.userRepresentation(depth: 0),
+        XCTAssertEqual(copy.accept(visitor: readablePrinter),
                        "test_field {" +
-                            "\n\tid" +
+                            "\n\tid," +
                             "\n\ttitle" +
                         "\n}")
     }

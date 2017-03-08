@@ -10,18 +10,19 @@ import Stardaze
 import XCTest
 
 final class DirectiveTests: XCTestCase {
+    let readablePrinter = ReadablePrinter()
     func testDeprecated() {
-        XCTAssertEqual(Directive.deprecated(Variable("deprecationReason")).userRepresentation(),
+        XCTAssertEqual(Directive.deprecated(Variable("deprecationReason")).accept(visitor: readablePrinter),
                        "@deprecated(reason: $deprecationReason)")
     }
 
     func testInclude() {
-        XCTAssertEqual(Directive.include(Variable("includeIf")).userRepresentation(),
+        XCTAssertEqual(Directive.include(Variable("includeIf")).accept(visitor: readablePrinter),
                        "@include(if: $includeIf)")
     }
 
     func testSkip() {
-        XCTAssertEqual(Directive.skip(Variable("skipIf")).userRepresentation(),
+        XCTAssertEqual(Directive.skip(Variable("skipIf")).accept(visitor: readablePrinter),
                        "@skip(if: $skipIf)")
     }
 }

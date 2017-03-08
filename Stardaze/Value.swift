@@ -1,5 +1,5 @@
 //
-//  Primitive.swift
+//  Value.swift
 //  Stardaze
 //
 //  Created by William Wilson on 2/8/17.
@@ -8,8 +8,7 @@
 
 /**
  Values are used in arguments and variable definitions. At the time being, 64-bit integers
- are being used in this library despite the GraphQL spec specifying 32-bit integers. Please override this if it causes
- issues in your codebase.
+ are being used in this library despite the GraphQL spec specifying 32-bit integers.
  */
 public enum Value {
     /**
@@ -59,59 +58,9 @@ public enum Value {
     case variable(Variable)
 
     /**
-     A stringified version of the value. This is used internally and it may also be used for debugging purposes.
+     Accept a visitor.
      */
-    public static func extractString(value: Value) -> String {
-        switch value {
-        case int(let int):
-            return "\(int)"
-        case double(let double):
-            return "\(double)"
-        case string(let string):
-            return "\"\(string)\""
-        case boolean(let bool):
-            return "\(bool)"
-        case null:
-            return "null"
-        case enumeration(let string):
-            return string
-        case list(let list):
-            return extractList(list: list)
-        case object(let object):
-            return extractObject(object: object)
-        case variable(let variable):
-            return "$\(variable.key)"
-        }
-    }
-
-    private static func extractList(list: [Value]) -> String {
-        var finishedString = "["
-
-        for (index, value) in zip(0..<list.count, list) {
-            if index != 0 {
-                finishedString.append(", ")
-            }
-            finishedString.append(extractString(value: value))
-        }
-
-        finishedString.append("]")
-
-        return finishedString
-    }
-
-    private static func extractObject(object: [String: Value]) -> String {
-        var finishedString = "{"
-
-        for (index, pair) in object.enumerated() {
-            if index != 0 {
-                finishedString.append(", ")
-            }
-
-            finishedString.append("\(pair.key): \(extractString(value: pair.value))")
-        }
-
-        finishedString.append("}")
-
-        return finishedString
+    public func accept<T>(visitor: Visitor<T>) -> T {
+        return visitor.visit(value: self)
     }
 }

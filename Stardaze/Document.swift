@@ -12,9 +12,9 @@
  from here.
  */
 public struct Document {
-    private var fragments: [Fragment]?
-    private let queryOperation: QueryOperation
-    private let whitespaceRegexp: NSRegularExpression? = {
+    internal var fragments: [Fragment]?
+    internal let queryOperation: QueryOperation
+    internal let whitespaceRegexp: NSRegularExpression? = {
         return try? NSRegularExpression(pattern: "[ \t\n]+", options: [])
     }()
 
@@ -31,6 +31,13 @@ public struct Document {
     public init(queryOperation: QueryOperation, fragments: [Fragment]? = nil) {
         self.queryOperation = queryOperation
         self.fragments = fragments
+    }
+
+    /**
+     Accepts a visitor
+     */
+    public func accept<T>(visitor: Visitor<T>) -> T {
+        return visitor.visit(document: self)
     }
 
     /**
@@ -58,68 +65,5 @@ public struct Document {
             return
         }
         self.fragments?.append(contentsOf: fragments)
-    }
-
-    /**
-     A stringified version of the document. This string is human readable with spaces and tabs.
-     */
-    public func userRepresentation() -> String {
-        var finishedString = queryOperation.userRepresentation()
-        if let fragments = fragments, fragments.count > 0 {
-            for fragment in fragments {
-                finishedString.append("\n\n")
-                finishedString.append(fragment.userDefinitionRepresentation())
-            }
-        }
-
-        if let values = queryOperation.valueRepresentations() {
-            finishedString.append("\n")
-
-            finishedString.append(values)
-        }
-
-        return finishedString
-    }
-
-    /**
-     A percent encoded representation of the document ready for placement in a url query.
-     */
-    public func encodedRepresentation() -> String {
-        guard let regexp = whitespaceRegexp else {
-            return ""
-        }
-
-        let transformedQuery = NSMutableString(string: userRepresentation().replacingOccurrences(of: ",", with: ""))
-
-        regexp.replaceMatches(in: transformedQuery,
-                              options: [],
-                              range: transformedQuery.range(of: transformedQuery as String),
-                              withTemplate: " ")
-
-        guard let queryString = transformedQuery.addingPercentEncoding(withAllowedCharacters:
-            CharacterSet.urlQueryAllowed) else {
-            return ""
-        }
-
-        guard let operationName = queryOperation.nameRepresentation()?.addingPercentEncoding(withAllowedCharacters:
-            CharacterSet.urlQueryAllowed),
-            let variablesMinusCommas = queryOperation.valueRepresentations()?.replacingOccurrences(of: ",",
-                                                                                                   with: "") else {
-            return "query=\(queryString)"
-        }
-
-        let transformedVariables = NSMutableString(string: variablesMinusCommas)
-
-        regexp.replaceMatches(in: transformedVariables,
-                              options: [],
-                              range: transformedVariables.range(of: transformedVariables as String),
-                              withTemplate: " ")
-
-        guard let variablesString =
-            transformedVariables.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) else {
-            return "query=\(queryString)"
-        }
-
-        return "query=\(queryString)&operationName=\(operationName)&variables=\(variablesString)"
     }
 }

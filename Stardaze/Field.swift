@@ -14,12 +14,12 @@
  used to specify what information should appear nested under the field.
  */
 public struct Field {
-    private let alias: String?
-    private var arguments: [Argument]?
-    private var directives: [Directive]?
-    private var fragments: [Fragment]?
-    private let name: String
-    private var subFields: [Field]?
+    internal let alias: String?
+    internal var arguments: [Argument]?
+    internal var directives: [Directive]?
+    internal var fragments: [Fragment]?
+    internal let name: String
+    internal var subFields: [Field]?
 
     /**
      The primary initializer
@@ -46,6 +46,13 @@ public struct Field {
         self.arguments = arguments
         self.directives = directives
         self.subFields = subFields
+    }
+
+    /**
+     Accepts a visitor
+     */
+    public func accept<T>(visitor: Visitor<T>) -> T {
+        return visitor.visit(field: self)
     }
 
     /**
@@ -158,59 +165,5 @@ public struct Field {
         }
 
         self.subFields?.append(contentsOf: subFields)
-    }
-
-    /**
-     A stringified version of the field. This is used internally and it may also be used for debugging.
-     */
-    public func userRepresentation(depth: Int) -> String {
-        var finishedString = ""
-
-        for _ in 0..<depth {
-            finishedString.append("\t")
-        }
-
-        if let alias = alias {
-            finishedString.append("\(alias): ")
-        }
-
-        finishedString.append(name)
-
-        if let arguments = arguments, arguments.count > 0 {
-            finishedString.append("(")
-            finishedString.append(arguments.userRepresentation())
-            finishedString.append(")")
-        }
-
-        if let directives = directives {
-            finishedString.append(" ")
-            finishedString.append(directives.userRepresentation())
-        }
-
-        if subFields != nil || fragments != nil {
-            finishedString.append(" {\n")
-
-            if let subFields = subFields {
-                for field in subFields {
-                    finishedString.append(field.userRepresentation(depth: depth + 1))
-                    finishedString.append("\n")
-                }
-            }
-
-            if let fragments = fragments {
-                for fragment in fragments {
-                    finishedString.append(fragment.userRepresentation(depth: depth + 1))
-                    finishedString.append("\n")
-                }
-            }
-
-            for _ in 0..<depth {
-                finishedString.append("\t")
-            }
-
-            finishedString.append("}")
-        }
-
-        return finishedString
     }
 }

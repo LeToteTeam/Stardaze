@@ -11,9 +11,9 @@
  is used should be passed both to the document and to the field or subfield in which is should appear.
  */
 public struct Fragment {
-    private var fields: [Field]
-    private let name: String
-    private let type: String
+    internal var fields: [Field]
+    internal let name: String
+    internal let type: String
 
     /**
      The primary initializer
@@ -28,6 +28,10 @@ public struct Fragment {
         self.name = name
         self.type = type
         self.fields = fields
+    }
+
+    public func accept<T>(visitor: Visitor<T>) -> T {
+        return visitor.visit(fragment: self)
     }
 
     /**
@@ -46,39 +50,5 @@ public struct Fragment {
      */
     public mutating func append(fields: [Field]) {
         self.fields.append(contentsOf: fields)
-    }
-
-    /**
-     A stringified version of the field. This is used internally and it may also be used for debugging.
-     */
-    public func userRepresentation(depth: Int) -> String {
-        var finishedString = ""
-
-        for _ in 0..<depth {
-            finishedString.append("\t")
-        }
-
-        finishedString.append("...\(name)")
-
-        return finishedString
-    }
-
-    /**
-     A stringified version of the definition of the field. This is used internally and it may also be used for
-     debugging.
-     */
-    public func userDefinitionRepresentation() -> String {
-        var finishedString = ""
-
-        finishedString.append("fragment \(name) on \(type) {\n")
-
-        for field in fields {
-            finishedString.append(field.userRepresentation(depth: 1))
-            finishedString.append("\n")
-        }
-
-        finishedString.append("}")
-
-        return finishedString
     }
 }

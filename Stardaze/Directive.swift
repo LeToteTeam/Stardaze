@@ -27,22 +27,11 @@ public enum Directive {
      the field.
      */
     case skip(Variable)
-}
 
-extension Directive: UserRepresentable {
     /**
-     A stringified version of the directive. This is used internally and it may also be used for debugging purposes.
+     Accept a visitor
      */
-    public func userRepresentation() -> String {
-        switch self {
-        case .deprecated(let variable):
-            return "@deprecated(reason: $\(variable.key))"
-
-        case .include(let variable):
-            return "@include(if: $\(variable.key))"
-
-        case .skip(let variable):
-            return "@skip(if: $\(variable.key))"
-        }
+    public func accept<T>(visitor: Visitor<T>) -> T {
+        return visitor.visit(directive: self)
     }
 }

@@ -10,8 +10,9 @@ import Stardaze
 import XCTest
 
 final class ArgumentTests: XCTestCase {
+    let readablePrinter = ReadablePrinter()
     let testArgument = Argument(key: "id", value: .int(5))
     func testUserRepresentation() {
-        XCTAssertEqual(testArgument.userRepresentation(), "id: 5")
+        XCTAssertEqual(testArgument.accept(visitor: readablePrinter), "id: 5")
     }
 }

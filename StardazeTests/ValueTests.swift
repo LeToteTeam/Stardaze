@@ -10,49 +10,50 @@ import Stardaze
 import XCTest
 
 final class ValueTests: XCTestCase {
+    let readablePrinter = ReadablePrinter()
     func testBoolean() {
-        XCTAssertEqual(Value.extractString(value: .boolean(false)), "false")
+        XCTAssertEqual(Value.boolean(false).accept(visitor: readablePrinter), "false")
     }
 
     func testDouble() {
-        XCTAssertEqual(Value.extractString(value: .double(5)), "5.0")
-        XCTAssertEqual(Value.extractString(value: .double(9.9999)), "9.9999")
+        XCTAssertEqual(Value.double(5).accept(visitor: readablePrinter), "5.0")
+        XCTAssertEqual(Value.double(9.9999).accept(visitor: readablePrinter), "9.9999")
     }
 
     func testEnumeration() {
-        XCTAssertEqual(Value.extractString(value: .enumeration("testEnum")), "testEnum")
+        XCTAssertEqual(Value.enumeration("testEnum").accept(visitor: readablePrinter), "testEnum")
     }
 
     func testInt() {
-        XCTAssertEqual(Value.extractString(value: .int(5)), "5")
+        XCTAssertEqual(Value.int(5).accept(visitor: readablePrinter), "5")
     }
 
     func testList() {
-        XCTAssertEqual(Value.extractString(value: .list([
+        XCTAssertEqual(Value.list([
             .boolean(false),
             .double(5.0),
             .enumeration("testEnum"),
             .int(5),
             .null,
             .string("testString"),
-            .variable(Variable("testVar"))])),
+            .variable(Variable("testVar"))]).accept(visitor: readablePrinter),
                        "[false, 5.0, testEnum, 5, null, \"testString\", $testVar]")
     }
 
     func testNull() {
-        XCTAssertEqual(Value.extractString(value: .null), "null")
+        XCTAssertEqual(Value.null.accept(visitor: readablePrinter), "null")
     }
 
     func testObject() {
         // There is no guaranteed order on dictionaries, so testing with multiple key value pairs is unpredictable.
-        XCTAssertEqual(Value.extractString(value: .object(["boolean": .boolean(false)])), "{boolean: false}")
+        XCTAssertEqual(Value.object(["boolean": .boolean(false)]).accept(visitor: readablePrinter), "{boolean: false}")
     }
 
     func testString() {
-        XCTAssertEqual(Value.extractString(value: .string("testString")), "\"testString\"")
+        XCTAssertEqual(Value.string("testString").accept(visitor: readablePrinter), "\"testString\"")
     }
 
     func testVariable() {
-        XCTAssertEqual(Value.extractString(value: .variable(Variable("testVar"))), "$testVar")
+        XCTAssertEqual(Value.variable(Variable("testVar")).accept(visitor: readablePrinter), "$testVar")
     }
 }

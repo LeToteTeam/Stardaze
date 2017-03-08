@@ -10,6 +10,8 @@ import Stardaze
 import XCTest
 
 class DocumentTests: XCTestCase {
+    let encodedPrinter = EncodedPrinter()
+    let readablePrinter = ReadablePrinter()
     let testDocument = Document(queryOperation: QueryOperation(name: "ProductList",
                                                                variableDefinitions: [
                                                                 VariableDefinition(key: "count",
@@ -20,14 +22,14 @@ class DocumentTests: XCTestCase {
     func testUserRepresentation() {
         var copy = testDocument
 
-        XCTAssertEqual(copy.userRepresentation(),
+        XCTAssertEqual(copy.accept(visitor: readablePrinter),
                        "query ProductList($count: Int) {" +
                             "\n\tproducts" +
                         "\n}" +
                         "\n{\"count\": 10}")
 
         copy.append(fragment: Fragment(name: "idFragment", type: "Product", fields: [Field(name: "id")]))
-        XCTAssertEqual(copy.userRepresentation(),
+        XCTAssertEqual(copy.accept(visitor: readablePrinter),
                        "query ProductList($count: Int) {" +
                         "\n\tproducts" +
             "\n}" +
@@ -45,7 +47,7 @@ class DocumentTests: XCTestCase {
             Fragment(name: "titleFragment", type: "Product", fields: [Field(name: "title")])
             ])
 
-        XCTAssertEqual(copy.userRepresentation(),
+        XCTAssertEqual(copy.accept(visitor: readablePrinter),
                        "query ProductList($count: Int) {" +
                         "\n\tproducts" +
             "\n}" +
@@ -64,7 +66,7 @@ class DocumentTests: XCTestCase {
         var unnamedDocument = Document(queryOperation: QueryOperation(fields: [Field(name: "products")]))
         unnamedDocument.append(fragment: Fragment(name: "idFragment", type: "Product", fields: [Field(name: "id")]))
 
-        XCTAssertEqual(unnamedDocument.encodedRepresentation(),
+        XCTAssertEqual(unnamedDocument.accept(visitor: encodedPrinter),
                        "query=%7B%20products%20%7D%20fragment%20idFragment%20on%20Product%20%7B%20id%20%7D")
 
         let namedDocument = Document(queryOperation:
@@ -72,7 +74,7 @@ class DocumentTests: XCTestCase {
                            variableDefinitions: [VariableDefinition(key: "count", type: "Int", value: .int(10))],
                            fields: [Field(name: "id")]))
 
-        XCTAssertEqual(namedDocument.encodedRepresentation(),
+        XCTAssertEqual(namedDocument.accept(visitor: encodedPrinter),
             "query=query%20ProductList($count:%20Int)%20%7B%20id%20%7D%20%7B%22count%22:%2010%7D&" +
             "operationName=ProductList&variables=%7B%22count%22:%2010%7D")
     }

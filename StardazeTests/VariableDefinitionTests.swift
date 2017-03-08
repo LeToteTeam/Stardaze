@@ -10,13 +10,13 @@ import Stardaze
 import XCTest
 
 final class VariableDefinitionTests: XCTestCase {
+    let readablePrinter = ReadablePrinter()
     func testRepresentations() {
         let definition = VariableDefinition(key: "testString",
                                             type: "String",
                                             notNullable: true,
                                             value: .string("Hello!"))
 
-        XCTAssertEqual(definition.userRepresentation(), "$testString: String!")
-        XCTAssertEqual(definition.valueRepresentation(), "\"testString\": \"Hello!\"")
+        XCTAssertEqual(definition.accept(visitor: readablePrinter), "$testString: String!")
     }
 }

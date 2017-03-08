@@ -12,10 +12,10 @@
  variableDefinitions.
  */
 public struct QueryOperation {
-    private var fields: [Field]
-    private var mutating: Bool
-    private var name: String?
-    private var variableDefinitions: [VariableDefinition]?
+    internal var fields: [Field]
+    internal var mutating: Bool
+    internal var name: String?
+    internal var variableDefinitions: [VariableDefinition]?
 
     /**
      A secondary initializer for unnamed queries, which cannot contain variables.
@@ -45,6 +45,13 @@ public struct QueryOperation {
         self.mutating = mutating
         self.fields = fields
         self.variableDefinitions = variableDefinitions
+    }
+
+    /**
+     Accepts a visitor.
+     */
+    public func accept<T>(visitor: Visitor<T>) -> T {
+        return visitor.visit(queryOperation: self)
     }
 
     /**
@@ -91,71 +98,5 @@ public struct QueryOperation {
         }
 
         self.variableDefinitions?.append(contentsOf: variableDefinitions)
-    }
-
-    /**
-     A stringified version of the name of the operation. This is used internally and it may also be used for debugging.
-     */
-    public func nameRepresentation() -> String? {
-        return name
-    }
-
-    /**
-     A stringified version of the operation. This is used internally and it may also be used for debugging.
-     */
-    public func userRepresentation() -> String {
-        var finishedString = ""
-
-        if let name = name {
-            finishedString.append(mutating ? "mutation " : "query ")
-
-            finishedString.append(name)
-
-            if let variableDefinitions = variableDefinitions {
-                finishedString.append("(")
-                finishedString.append(variableDefinitions.userRepresentation())
-                finishedString.append(")")
-            }
-
-            finishedString.append(" ")
-        }
-
-        finishedString.append("{\n")
-
-        for (index, field) in zip(0..<fields.count, fields) {
-            if index != 0 {
-                finishedString.append(",")
-                finishedString.append("\n")
-            }
-
-            finishedString.append(field.userRepresentation(depth: 1))
-        }
-
-        finishedString.append("\n}")
-
-        return finishedString
-    }
-
-    /**
-     A stringified version of the values of the variables on the operation. This is used internally and it may also be
-     used for debugging.
-     */
-    public func valueRepresentations() -> String? {
-        guard let variableDefinitions = variableDefinitions, variableDefinitions.count >= 0 else {
-            return nil
-        }
-
-        var finishedString = "{"
-
-        for (index, variable) in zip(0..<variableDefinitions.count, variableDefinitions) {
-            if index != 0 {
-                finishedString.append(", ")
-            }
-            finishedString.append(variable.valueRepresentation())
-        }
-
-        finishedString.append("}")
-
-        return finishedString
     }
 }

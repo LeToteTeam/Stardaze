@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.description  = "Stardaze is a type safe query builder modeled closely from the GraphQL specification."
   s.license      = "MIT"
   s.authors      = { "william wilson" => "will@letote.com" }
-  s.homepage     = "https://github.com/letoteteam/stardaze"
+  s.homepage     = "https://github.com/LeToteTeam/Stardaze"
 
   s.platform     = :ios
   s.platform     = :ios, "9.0"

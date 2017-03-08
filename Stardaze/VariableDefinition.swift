@@ -11,10 +11,10 @@
  the query operation.
  */
 public struct VariableDefinition {
-    fileprivate let key: String
-    fileprivate let notNullable: Bool
-    fileprivate let type: String
-    private let value: Value
+    internal let key: String
+    internal let notNullable: Bool
+    internal let type: String
+    internal let value: Value
 
     /**
      The primary initializer.
@@ -35,19 +35,9 @@ public struct VariableDefinition {
     }
 
     /**
-     A stringified version of the value of the variable. This is used internally and it may also be used for debugging.
+     Accept a visitor
      */
-    public func valueRepresentation() -> String {
-        return "\"\(key)\": \(Value.extractString(value: value))"
-    }
-}
-
-extension VariableDefinition: UserRepresentable {
-    /**
-     A stringified version of the definition of the variable. This is used internally and it may also be used for
-     debugging.
-     */
-    public func userRepresentation() -> String {
-        return "$\(key): \(type)\(notNullable ? "!" : "")"
+    public func accept<T>(visitor: Visitor<T>) -> T {
+        return visitor.visit(variableDefinition: self)
     }
 }
