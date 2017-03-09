@@ -11,17 +11,17 @@ public final class EncodedPrinter: Visitor<String> {
     let whitespaceRegexp = try! NSRegularExpression(pattern: "[ \t\n]+", options: [])
     public override init() {}
 
-    internal override func visit(argument: Argument) -> String {
+    internal override func visit(_ argument: Argument) -> String {
         return ""
     }
 
-    internal override func visit(directive: Directive) -> String {
+    internal override func visit(_ directive: Directive) -> String {
         return ""
     }
 
-    public override func visit(document: Document) -> String {
+    public override func visit(_ document: Document) -> String {
         let transformedQuery =
-            NSMutableString(string: readablePrinter.visit(document: document).replacingOccurrences(of: ",", with: ""))
+            NSMutableString(string: readablePrinter.visit(document).replacingOccurrences(of: ",", with: ""))
 
         whitespaceRegexp.replaceMatches(in: transformedQuery,
                                         options: [],
@@ -62,23 +62,23 @@ public final class EncodedPrinter: Visitor<String> {
         return "query=\(queryString)&operationName=\(operationName)&variables=\(variablesString)"
     }
 
-    internal override func visit(field: Field) -> String {
+    internal override func visit(_ field: Field) -> String {
         return ""
     }
 
-    internal override func visit(fragment: Fragment) -> String {
+    internal override func visit(_ fragment: Fragment) -> String {
         return ""
     }
 
-    internal override func visit(queryOperation: QueryOperation) -> String {
+    internal override func visit(_ queryOperation: QueryOperation) -> String {
         return ""
     }
 
-    internal override func visit(value: Value) -> String {
+    internal override func visit(_ value: Value) -> String {
         return ""
     }
 
-    internal override func visit(variableDefinition: VariableDefinition) -> String {
+    internal override func visit(_ variableDefinition: VariableDefinition) -> String {
         return ""
     }
 }

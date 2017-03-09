@@ -34,13 +34,6 @@ public struct Document {
     }
 
     /**
-     Accepts a visitor
-     */
-    public func accept<T>(visitor: Visitor<T>) -> T {
-        return visitor.visit(document: self)
-    }
-
-    /**
      Appends a single fragment to be listed in the fragment definitions.
      
      - parameter fragment: The fragment to appear in the list.
@@ -65,5 +58,14 @@ public struct Document {
             return
         }
         self.fragments?.append(contentsOf: fragments)
+    }
+}
+
+extension Document: Receiver {
+    /**
+     Accepts a visitor
+     */
+    public func accept<T>(visitor: Visitor<T>) -> T {
+        return visitor.visit(self)
     }
 }

@@ -24,11 +24,13 @@ public struct Argument {
         self.key = key
         self.value = value
     }
+}
 
+extension Argument: Receiver {
     /**
      Accept a visitor
      */
     public func accept<T>(visitor: Visitor<T>) -> T {
-        return visitor.visit(argument: self)
+        return visitor.visit(self)
     }
 }

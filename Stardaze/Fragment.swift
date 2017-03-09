@@ -30,10 +30,6 @@ public struct Fragment {
         self.fields = fields
     }
 
-    public func accept<T>(visitor: Visitor<T>) -> T {
-        return visitor.visit(fragment: self)
-    }
-
     /**
      Appends a single field to the fragment.
      
@@ -50,5 +46,14 @@ public struct Fragment {
      */
     public mutating func append(fields: [Field]) {
         self.fields.append(contentsOf: fields)
+    }
+}
+
+extension Fragment: Receiver {
+    /**
+     Accepts a visitor.
+     */
+    public func accept<T>(visitor: Visitor<T>) -> T {
+        return visitor.visit(self)
     }
 }

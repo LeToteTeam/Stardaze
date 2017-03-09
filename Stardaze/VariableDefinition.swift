@@ -33,11 +33,13 @@ public struct VariableDefinition {
         self.notNullable = notNullable
         self.value = value
     }
+}
 
+extension VariableDefinition: Receiver {
     /**
      Accept a visitor
      */
     public func accept<T>(visitor: Visitor<T>) -> T {
-        return visitor.visit(variableDefinition: self)
+        return visitor.visit(self)
     }
 }

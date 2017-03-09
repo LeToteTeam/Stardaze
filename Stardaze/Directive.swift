@@ -27,11 +27,13 @@ public enum Directive {
      the field.
      */
     case skip(Variable)
+}
 
+extension Directive: Receiver {
     /**
      Accept a visitor
      */
     public func accept<T>(visitor: Visitor<T>) -> T {
-        return visitor.visit(directive: self)
+        return visitor.visit(self)
     }
 }

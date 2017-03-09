@@ -12,35 +12,35 @@
 public class Visitor<T> {
     internal init() {}
     private let virtualFunctionError = "Virtual function must be overridden"
-    internal func visit(argument: Argument) -> T {
+    internal func visit(_: Argument) -> T {
         fatalError(virtualFunctionError)
     }
 
-    internal func visit(directive: Directive) -> T {
+    internal func visit(_: Directive) -> T {
         fatalError(virtualFunctionError)
     }
 
-    internal func visit(document: Document) -> T {
+    internal func visit(_: Document) -> T {
         fatalError(virtualFunctionError)
     }
 
-    internal func visit(field: Field) -> T {
+    internal func visit(_: Field) -> T {
         fatalError(virtualFunctionError)
     }
 
-    internal func visit(fragment: Fragment) -> T {
+    internal func visit(_: Fragment) -> T {
         fatalError(virtualFunctionError)
     }
 
-    internal func visit(queryOperation: QueryOperation) -> T {
+    internal func visit(_: QueryOperation) -> T {
         fatalError(virtualFunctionError)
     }
 
-    internal func visit(value: Value) -> T {
+    internal func visit(_: Value) -> T {
         fatalError(virtualFunctionError)
     }
 
-    internal func visit(variableDefinition: VariableDefinition) -> T {
+    internal func visit(_: VariableDefinition) -> T {
         fatalError(virtualFunctionError)
     }
 }

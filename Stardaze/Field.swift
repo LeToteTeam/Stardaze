@@ -49,13 +49,6 @@ public struct Field {
     }
 
     /**
-     Accepts a visitor
-     */
-    public func accept<T>(visitor: Visitor<T>) -> T {
-        return visitor.visit(field: self)
-    }
-
-    /**
      Appends a single argument to the field.
      
      - parameter argument: The argument to appear on the field.
@@ -165,5 +158,14 @@ public struct Field {
         }
 
         self.subFields?.append(contentsOf: subFields)
+    }
+}
+
+extension Field: Receiver {
+    /**
+     Accepts a visitor
+     */
+    public func accept<T>(visitor: Visitor<T>) -> T {
+        return visitor.visit(self)
     }
 }

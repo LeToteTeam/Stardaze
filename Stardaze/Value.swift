@@ -56,11 +56,13 @@ public enum Value {
      A variable. When using variables, the variable type definition must be given inside the document.
      */
     case variable(Variable)
+}
 
+extension Value: Receiver {
     /**
      Accept a visitor.
      */
     public func accept<T>(visitor: Visitor<T>) -> T {
-        return visitor.visit(value: self)
+        return visitor.visit(self)
     }
 }

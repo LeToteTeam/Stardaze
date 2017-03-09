@@ -33,15 +33,24 @@ public final class ReadablePrinter: Visitor<String> {
         return finishedString
     }
 
-    private func makeReadableString(argumentList: [Argument]) -> String {
-        var finishedString = "("
-        for (index, argument) in zip(0..<argumentList.count, argumentList) {
+    private func makeReadableSingleLineString(receiverList: [Receiver]) -> String {
+        var finishedString = ""
+
+        for (index, receiver) in zip(0..<receiverList.count, receiverList) {
             if index != 0 {
                 finishedString.append(", ")
             }
 
-            finishedString.append(visit(argument: argument))
+            finishedString.append(receiver.accept(visitor: self))
         }
+
+        return finishedString
+    }
+
+    private func makeReadableString(argumentList: [Argument]) -> String {
+        var finishedString = "("
+
+        finishedString.append(makeReadableSingleLineString(receiverList: argumentList))
 
         finishedString.append(")")
 
@@ -50,13 +59,8 @@ public final class ReadablePrinter: Visitor<String> {
 
     private func makeReadableString(directiveList: [Directive]) -> String {
         var finishedString = " "
-        for (index, directive) in zip(0..<directiveList.count, directiveList) {
-            if index != 0 {
-                finishedString.append(", ")
-            }
 
-            finishedString.append(visit(directive: directive))
-        }
+        finishedString.append(makeReadableSingleLineString(receiverList: directiveList))
 
         return finishedString
     }
@@ -138,12 +142,7 @@ public final class ReadablePrinter: Visitor<String> {
     private func makeReadableString(valueList: [Value]) -> String {
         var finishedString = "["
 
-        for (index, value) in zip(0..<valueList.count, valueList) {
-            if index != 0 {
-                finishedString.append(", ")
-            }
-            finishedString.append(visit(value: value))
-        }
+        finishedString.append(makeReadableSingleLineString(receiverList: valueList))
 
         finishedString.append("]")
 
@@ -167,18 +166,13 @@ public final class ReadablePrinter: Visitor<String> {
     }
 
     private func makeReadableString(string: String, value: Value) -> String {
-        return "\(string): \(visit(value: value))"
+        return "\(string): \(visit(value))"
     }
 
     private func makeReadableString(variableDefinitionList: [VariableDefinition]) -> String {
         var finishedString = "("
-        for (index, variableDefinition) in zip(0..<variableDefinitionList.count, variableDefinitionList) {
-            if index != 0 {
-                finishedString.append(", ")
-            }
 
-            finishedString.append(visit(variableDefinition: variableDefinition))
-        }
+        finishedString.append(makeReadableSingleLineString(receiverList: variableDefinitionList))
 
         finishedString.append(")")
 
@@ -186,7 +180,7 @@ public final class ReadablePrinter: Visitor<String> {
     }
 
     private func makeReadableVariableValueString(variableDefinition: VariableDefinition) -> String {
-        return "\"\(variableDefinition.key)\": \(visit(value: variableDefinition.value))"
+        return "\"\(variableDefinition.key)\": \(visit(variableDefinition.value))"
     }
 
     internal func makeReadableVariableValueListString(variableDefinitionList: [VariableDefinition]) -> String {
@@ -204,11 +198,11 @@ public final class ReadablePrinter: Visitor<String> {
         return finishedString
     }
 
-    public override func visit(argument: Argument) -> String {
+    public override func visit(_ argument: Argument) -> String {
         return makeReadableString(string: argument.key, value: argument.value)
     }
 
-    public override func visit(directive: Directive) -> String {
+    public override func visit(_ directive: Directive) -> String {
         switch directive {
         case .deprecated(let variable):
             return "@deprecated(reason: $\(variable.key))"
@@ -221,12 +215,12 @@ public final class ReadablePrinter: Visitor<String> {
         }
     }
 
-    public override func visit(document: Document) -> String {
-        var finishedString = visit(queryOperation: document.queryOperation)
+    public override func visit(_ document: Document) -> String {
+        var finishedString = visit(document.queryOperation)
         if let fragments = document.fragments, fragments.count > 0 {
             for fragment in fragments {
                 finishedString.append("\n\n")
-                finishedString.append(visit(fragment: fragment))
+                finishedString.append(visit(fragment))
             }
         }
 
@@ -239,11 +233,11 @@ public final class ReadablePrinter: Visitor<String> {
         return finishedString
     }
 
-    public override func visit(field: Field) -> String {
+    public override func visit(_ field: Field) -> String {
         return makeReadableString(field: field, atDepth: 0)
     }
 
-    public override func visit(fragment: Fragment) -> String {
+    public override func visit(_ fragment: Fragment) -> String {
         var finishedString = ""
 
         finishedString.append("fragment \(fragment.name) on \(fragment.type) {\n")
@@ -255,7 +249,7 @@ public final class ReadablePrinter: Visitor<String> {
         return finishedString
     }
 
-    public override func visit(value: Value) -> String {
+    public override func visit(_ value: Value) -> String {
         switch value {
         case .int(let int):
             return "\(int)"
@@ -286,11 +280,11 @@ public final class ReadablePrinter: Visitor<String> {
         }
     }
 
-    public override func visit(variableDefinition: VariableDefinition) -> String {
+    public override func visit(_ variableDefinition: VariableDefinition) -> String {
         return "$\(variableDefinition.key): \(variableDefinition.type)\(variableDefinition.notNullable ? "!" : "")"
     }
 
-    public override func visit(queryOperation: QueryOperation) -> String {
+    public override func visit(_ queryOperation: QueryOperation) -> String {
         var finishedString = ""
 
         if let name = queryOperation.name {

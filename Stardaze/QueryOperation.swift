@@ -48,13 +48,6 @@ public struct QueryOperation {
     }
 
     /**
-     Accepts a visitor.
-     */
-    public func accept<T>(visitor: Visitor<T>) -> T {
-        return visitor.visit(queryOperation: self)
-    }
-
-    /**
      Appends a single field to the operation.
      
      - parameter field: The field to appear on the operation.
@@ -98,5 +91,14 @@ public struct QueryOperation {
         }
 
         self.variableDefinitions?.append(contentsOf: variableDefinitions)
+    }
+}
+
+extension QueryOperation: Receiver {
+    /**
+     Accepts a visitor.
+     */
+    public func accept<T>(visitor: Visitor<T>) -> T {
+        return visitor.visit(self)
     }
 }

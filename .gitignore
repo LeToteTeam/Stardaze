@@ -12,6 +12,7 @@
 # User-specific stuff:
 # Jazzy docs:
 docs/
+*#
 
 ## File-based project format:
 *.ipr
