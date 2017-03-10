@@ -6,9 +6,16 @@
 //  Copyright © 2017 LeTote. All rights reserved.
 //
 
+/**
+ The EncodedPrinter is used to create the query string that should be sent to the server.
+ */
 public final class EncodedPrinter: Visitor<String> {
     let readablePrinter = ReadablePrinter()
     let whitespaceRegexp = try! NSRegularExpression(pattern: "[ \t\n]+", options: [])
+    
+    /**
+     Initializes an encoded printer.
+     */
     public override init() {}
 
     internal override func visit(_ argument: Argument) -> String {
@@ -19,6 +26,16 @@ public final class EncodedPrinter: Visitor<String> {
         return ""
     }
 
+    /**
+     Creates an encoded String for a Document
+     
+     ``` swift
+     var unnamedDocument = Document(queryOperation: QueryOperation(fields: [Field(name: "products")]))
+     unnamedDocument.append(fragment: Fragment(name: "idFragment", type: "Product", fields: [Field(name: "id")]))
+     
+     visit(unnamedDocument) => "query=%7B%20products%20%7D%20fragment%20idFragment%20on%20Product%20%7B%20id%20%7D"
+     ```
+     */
     public override func visit(_ document: Document) -> String {
         let transformedQuery =
             NSMutableString(string: readablePrinter.visit(document).replacingOccurrences(of: ",", with: ""))

@@ -21,6 +21,9 @@
                                          }
  */
 public final class ReadablePrinter: Visitor<String> {
+    /**
+     Initializes a readable printer.
+     */
     public override init() {}
 
     private func fragmentContents(fragment: Fragment, depth: Int) -> String {
@@ -198,10 +201,24 @@ public final class ReadablePrinter: Visitor<String> {
         return finishedString
     }
 
+    /**
+     Creates a String for Arguments
+
+     ``` swift
+     visit(Argument(key: "id", value: .int(5))) => "id: 5"
+     ```
+     */
     public override func visit(_ argument: Argument) -> String {
         return makeReadableString(string: argument.key, value: argument.value)
     }
 
+    /**
+     Creates a String for Directives
+
+     ``` swift
+     visit(Directive.include(Variable("includeIf"))) => "@include(if: $includeIf)"
+     ```
+     */
     public override func visit(_ directive: Directive) -> String {
         switch directive {
         case .deprecated(let variable):
@@ -215,6 +232,26 @@ public final class ReadablePrinter: Visitor<String> {
         }
     }
 
+    /**
+     Creates a String for Documents
+
+     ``` swift
+     visit(Document(queryOperation: 
+         QueryOperation(name: "Product", 
+                        variableDefinitions: [VariableDefinition(key: "id", 
+                                                                 type: "Int", 
+                                                                 notNullable: true, 
+                                                                 value: .int(5))],
+                        fields: [Field(name: product, arguments: Argument(key: "id", value: .variable("id")))]))) =>
+     
+     "query Product($id: Int) {
+         product(id: $id) {
+             id
+         }
+     }
+     {"id": 5}"
+     ```
+     */
     public override func visit(_ document: Document) -> String {
         var finishedString = visit(document.queryOperation)
         if let fragments = document.fragments, fragments.count > 0 {
@@ -233,10 +270,32 @@ public final class ReadablePrinter: Visitor<String> {
         return finishedString
     }
 
+    /**
+     Creates a String for Fields
+
+     ``` swift
+     visit(Field(name: "test_field", alias: "testField", subFields: [Field(name: "id")])) =>
+
+     "testField: test_field {
+         id
+     }" 
+     ```
+     */
     public override func visit(_ field: Field) -> String {
         return makeReadableString(field: field, atDepth: 0)
     }
 
+    /**
+     Creates a String for Fragments
+
+     ``` swift
+     visit(Fragment(name: "testFragment", type: "TestObject", fields: [Field(name: "id")])) =>
+
+     "fragment testFragment on TestObject {
+          id
+     }"
+     ```
+     */
     public override func visit(_ fragment: Fragment) -> String {
         var finishedString = ""
 
@@ -249,6 +308,20 @@ public final class ReadablePrinter: Visitor<String> {
         return finishedString
     }
 
+    /**
+     Creates a string for Values.
+     
+     ``` swift
+        visit(.int(1))                              => "1"
+        visit(.double(1))                           => "1.0"
+        visit(.string("hello"))                     => "\"hello\""
+        visit(.null)                                => "null"
+        visit(.enumeration("hello world"))          => "hello"
+        visit(.list([.int(1), .string("hello")])    => "[1, \"hello\"]"
+        visit(.object(["hello": .string("hello)])   => "{hello: 1.0}"
+        visit(.variable("hello"))                   => "$hello"
+     ```
+     */
     public override func visit(_ value: Value) -> String {
         switch value {
         case .int(let int):
@@ -280,10 +353,32 @@ public final class ReadablePrinter: Visitor<String> {
         }
     }
 
+    /**
+     Create a VariableDefinition String
+
+     ``` swift
+     visit(VariableDefinition(key: "hello", type: String", notNullable: true, value: .string("Hello!")) => "$testString: String!"
+     ```
+     */
     public override func visit(_ variableDefinition: VariableDefinition) -> String {
         return "$\(variableDefinition.key): \(variableDefinition.type)\(variableDefinition.notNullable ? "!" : "")"
     }
 
+    /**
+     Create a QueryOperation String
+
+     ``` swift
+     visit(QueryOperation(name: "ProductList", 
+                          fields: [Field(name: "products", subfields: [Field(name: "id"), Field(name: "name"])])) =>
+
+     "query ProductList {
+         products {
+             id,
+             name
+         }
+     }"
+     ```
+     */
     public override func visit(_ queryOperation: QueryOperation) -> String {
         var finishedString = ""
 
