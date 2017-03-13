@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "Stardaze"
-  s.version      = "0.0.2"
+  s.version      = "0.0.3"
   s.summary      = "A GraphQL query builder"
   s.description  = "Stardaze is a type safe query builder modeled closely from the GraphQL specification."
   s.license      = "MIT"
