@@ -12,7 +12,7 @@
 public final class EncodedPrinter: Visitor<String> {
     let readablePrinter = ReadablePrinter()
     let whitespaceRegexp = try! NSRegularExpression(pattern: "[ \t\n]+", options: [])
-    
+
     /**
      Initializes an encoded printer.
      */
@@ -59,7 +59,8 @@ public final class EncodedPrinter: Visitor<String> {
 
         if let variableDefinitionList = document.queryOperation.variableDefinitions {
             variablesMinusCommas =
-                readablePrinter.makeReadableVariableValueListString(variableDefinitionList: variableDefinitionList)
+                readablePrinter.makeReadableVariableValueListString(variableDefinitionList:
+                    variableDefinitionList)
         } else {
             variablesMinusCommas = ""
         }
@@ -73,7 +74,7 @@ public final class EncodedPrinter: Visitor<String> {
 
         guard let variablesString =
             transformedVariables.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) else {
-                return "query=\(queryString)"
+                return "query=\(queryString)&operationName=\(operationName)"
         }
 
         return "query=\(queryString)&operationName=\(operationName)&variables=\(variablesString)"

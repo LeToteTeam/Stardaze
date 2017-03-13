@@ -46,7 +46,8 @@ final class ValueTests: XCTestCase {
 
     func testObject() {
         // There is no guaranteed order on dictionaries, so testing with multiple key value pairs is unpredictable.
-        XCTAssertEqual(Value.object(["string": .string("string")]).accept(visitor: readablePrinter), "{string: \"string\"}")
+        XCTAssertEqual(Value.object(["string": .string("string")]).accept(visitor: readablePrinter),
+                       "{string: \"string\"}")
     }
 
     func testString() {

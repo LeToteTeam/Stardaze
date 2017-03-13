@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7B5B58381E77135E005407F4 /* EncodedParametersPrinter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5B58371E77135E005407F4 /* EncodedParametersPrinter.swift */; };
 		7B71DC361E4A856A0081790A /* Stardaze.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B71DC2C1E4A856A0081790A /* Stardaze.framework */; };
 		7B71DC3D1E4A856A0081790A /* Stardaze.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B71DC2F1E4A856A0081790A /* Stardaze.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7B71DC471E4A85990081790A /* Field.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B71DC461E4A85990081790A /* Field.swift */; };
@@ -43,6 +44,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7B5B58371E77135E005407F4 /* EncodedParametersPrinter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncodedParametersPrinter.swift; sourceTree = "<group>"; };
 		7B71DC2C1E4A856A0081790A /* Stardaze.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Stardaze.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B71DC2F1E4A856A0081790A /* Stardaze.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Stardaze.h; sourceTree = "<group>"; };
 		7B71DC301E4A856A0081790A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 				7B792B2B1E6F392C00DE404E /* ReadablePrinter.swift */,
 				7BE692B21E7090D60097874B /* EncodedPrinter.swift */,
 				7BE692B41E71CBA50097874B /* Receiver.swift */,
+				7B5B58371E77135E005407F4 /* EncodedParametersPrinter.swift */,
 			);
 			path = Stardaze;
 			sourceTree = "<group>";
@@ -272,6 +275,7 @@
 				7B71DC471E4A85990081790A /* Field.swift in Sources */,
 				7BF0BFB41E4BDA3300E56EDE /* Variable.swift in Sources */,
 				7BF0BFC41E4CF32D00E56EDE /* Directive.swift in Sources */,
+				7B5B58381E77135E005407F4 /* EncodedParametersPrinter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

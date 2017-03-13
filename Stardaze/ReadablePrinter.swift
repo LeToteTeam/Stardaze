@@ -357,7 +357,10 @@ public final class ReadablePrinter: Visitor<String> {
      Create a VariableDefinition String
 
      ``` swift
-     visit(VariableDefinition(key: "hello", type: String", notNullable: true, value: .string("Hello!")) => "$testString: String!"
+     visit(VariableDefinition(key: "hello", 
+                              type: String", 
+                              notNullable: true, 
+                              value: .string("Hello!")) => "$testString: String!"
      ```
      */
     public override func visit(_ variableDefinition: VariableDefinition) -> String {
