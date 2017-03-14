@@ -40,10 +40,7 @@ public final class EncodedPrinter: Visitor<String> {
         let transformedQuery =
             NSMutableString(string: readablePrinter.visit(document).replacingOccurrences(of: ",", with: ""))
 
-        whitespaceRegexp.replaceMatches(in: transformedQuery,
-                                        options: [],
-                                        range: transformedQuery.range(of: transformedQuery as String),
-                                        withTemplate: " ")
+        transformedQuery.condenseWhitespace()
 
         guard let queryString = transformedQuery.addingPercentEncoding(withAllowedCharacters:
             CharacterSet.urlQueryAllowed) else {
@@ -67,10 +64,7 @@ public final class EncodedPrinter: Visitor<String> {
 
         let transformedVariables = NSMutableString(string: variablesMinusCommas)
 
-        whitespaceRegexp.replaceMatches(in: transformedVariables,
-                              options: [],
-                              range: transformedVariables.range(of: transformedVariables as String),
-                              withTemplate: " ")
+        transformedVariables.condenseWhitespace()
 
         guard let variablesString =
             transformedVariables.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) else {

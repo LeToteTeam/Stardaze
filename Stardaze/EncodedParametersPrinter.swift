@@ -34,16 +34,12 @@ public final class EncodedParametersPrinter: Visitor<[String: Any]> {
         let transformedQuery =
             NSMutableString(string: readablePrinter.visit(document).replacingOccurrences(of: ",", with: ""))
 
-        whitespaceRegexp.replaceMatches(in: transformedQuery,
-                                        options: [],
-                                        range: transformedQuery.range(of: transformedQuery as String),
-                                        withTemplate: " ")
+        transformedQuery.condenseWhitespace()
 
         guard let queryString = transformedQuery.addingPercentEncoding(withAllowedCharacters:
             CharacterSet.urlQueryAllowed) else {
             return [:]
         }
-
         var parameters = ["query": queryString]
 
         guard let operationName = document.queryOperation.name?.addingPercentEncoding(withAllowedCharacters:
@@ -64,10 +60,7 @@ public final class EncodedParametersPrinter: Visitor<[String: Any]> {
 
         let transformedVariables = NSMutableString(string: variablesMinusComas)
 
-        whitespaceRegexp.replaceMatches(in: transformedVariables,
-                                        options: [],
-                                        range: transformedVariables.range(of: transformedVariables as String),
-                                        withTemplate: " ")
+        transformedVariables.condenseWhitespace()
 
         guard let variablesString = transformedVariables.addingPercentEncoding(withAllowedCharacters:
             CharacterSet.urlQueryAllowed) else {
