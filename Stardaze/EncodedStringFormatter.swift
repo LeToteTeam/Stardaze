@@ -1,5 +1,5 @@
 //
-//  EncodedPrinter.swift
+//  EncodedStringFormatter.swift
 //  Stardaze
 //
 //  Created by William Wilson on 3/8/17.
@@ -7,14 +7,14 @@
 //
 
 /**
- The EncodedPrinter is used to create the query string that should be sent to the server.
+ The EncodedStringFormatter is used to create a percent encoded query string.
  */
-public final class EncodedPrinter: Visitor<String> {
-    let readablePrinter = ReadablePrinter()
+public final class EncodedStringFormatter: Visitor<String> {
+    let unencodedStringFormatter = UnencodedStringFormatter()
     let whitespaceRegexp = try! NSRegularExpression(pattern: "[ \t\n]+", options: [])
 
     /**
-     Initializes an encoded printer.
+     Initializes an encoded string formatter.
      */
     public override init() {}
 
@@ -38,7 +38,7 @@ public final class EncodedPrinter: Visitor<String> {
      */
     public override func visit(_ document: Document) -> String {
         let transformedQuery =
-            NSMutableString(string: readablePrinter.visit(document).replacingOccurrences(of: ",", with: ""))
+            NSMutableString(string: unencodedStringFormatter.visit(document).replacingOccurrences(of: ",", with: ""))
 
         transformedQuery.condenseWhitespace()
 
@@ -56,7 +56,7 @@ public final class EncodedPrinter: Visitor<String> {
 
         if let variableDefinitionList = document.queryOperation.variableDefinitions {
             variablesMinusCommas =
-                readablePrinter.makeReadableVariableValueListString(variableDefinitionList:
+                unencodedStringFormatter.makeReadableVariableValueListString(variableDefinitionList:
                     variableDefinitionList)
         } else {
             variablesMinusCommas = ""
@@ -79,6 +79,10 @@ public final class EncodedPrinter: Visitor<String> {
     }
 
     internal override func visit(_ fragment: Fragment) -> String {
+        return ""
+    }
+    
+    internal override func visit(_ fragments: [Fragment]) -> String {
         return ""
     }
 

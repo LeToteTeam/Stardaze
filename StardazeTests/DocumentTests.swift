@@ -10,9 +10,10 @@ import Stardaze
 import XCTest
 
 class DocumentTests: XCTestCase {
-    let encodedPrinter = EncodedPrinter()
-    let readablePrinter = ReadablePrinter()
-    let parametersPrinter = EncodedParametersPrinter()
+    let encodedStringFormatter = EncodedStringFormatter()
+    let unencodedStringFormatter = UnencodedStringFormatter()
+    let encodedParametersFormatter = EncodedParametersFormatter()
+    let unencodedParametersFormatter = UnencodedParametersFormatter()
     let testDocument = Document(queryOperation: QueryOperation(name: "ProductList",
                                                                variableDefinitions: [
                                                                 VariableDefinition(key: "count",
@@ -23,14 +24,14 @@ class DocumentTests: XCTestCase {
     func testUserRepresentation() {
         var copy = testDocument
 
-        XCTAssertEqual(copy.accept(visitor: readablePrinter),
+        XCTAssertEqual(copy.accept(visitor: unencodedStringFormatter),
                        "query ProductList($count: Int) {" +
                             "\n\tproducts" +
                         "\n}" +
                         "\n{\"count\": 10}")
 
         copy.append(fragment: Fragment(name: "idFragment", type: "Product", fields: [Field(name: "id")]))
-        XCTAssertEqual(copy.accept(visitor: readablePrinter),
+        XCTAssertEqual(copy.accept(visitor: unencodedStringFormatter),
                        "query ProductList($count: Int) {" +
                         "\n\tproducts" +
             "\n}" +
@@ -48,7 +49,7 @@ class DocumentTests: XCTestCase {
             Fragment(name: "titleFragment", type: "Product", fields: [Field(name: "title")])
             ])
 
-        XCTAssertEqual(copy.accept(visitor: readablePrinter),
+        XCTAssertEqual(copy.accept(visitor: unencodedStringFormatter),
                        "query ProductList($count: Int) {" +
                         "\n\tproducts" +
             "\n}" +
@@ -63,11 +64,35 @@ class DocumentTests: XCTestCase {
             "\n{\"count\": 10}")
     }
 
+    func testUnencodedParametersRepresentation() {
+        var unnamedDocument = Document(queryOperation: QueryOperation(fields: [Field(name: "products")]))
+        unnamedDocument.append(fragment: Fragment(name: "idFragment", type: "Product", fields: [Field(name: "id")]))
+        
+        let unnamedParameters = unnamedDocument.accept(visitor: encodedParametersFormatter)
+        
+        XCTAssertEqual(unnamedParameters.count, 1)
+        XCTAssertEqual(unnamedParameters["query"] as! String,
+                       "%7B%20products%20%7D%20fragment%20idFragment%20on%20Product%20%7B%20id%20%7D")
+        
+        let namedDocument = Document(queryOperation:
+            QueryOperation(name: "ProductList",
+                           variableDefinitions: [VariableDefinition(key: "count", type: "Int", value: .int(10))],
+                           fields: [Field(name: "id")]))
+        
+        let namedParameters = namedDocument.accept(visitor: encodedParametersFormatter)
+        
+        XCTAssertEqual(namedParameters.count, 3)
+        XCTAssertEqual(namedParameters["query"] as! String,
+                       "query%20ProductList($count:%20Int)%20%7B%20id%20%7D")
+        XCTAssertEqual(namedParameters["operationName"] as! String, "ProductList")
+        XCTAssertEqual(namedParameters["variables"] as! String, "%7B%22count%22:%2010%7D")
+    }
+    
     func testServerRepresentation() {
         var unnamedDocument = Document(queryOperation: QueryOperation(fields: [Field(name: "products")]))
         unnamedDocument.append(fragment: Fragment(name: "idFragment", type: "Product", fields: [Field(name: "id")]))
 
-        XCTAssertEqual(unnamedDocument.accept(visitor: encodedPrinter),
+        XCTAssertEqual(unnamedDocument.accept(visitor: encodedStringFormatter),
                        "query=%7B%20products%20%7D%20fragment%20idFragment%20on%20Product%20%7B%20id%20%7D")
 
         let namedDocument = Document(queryOperation:
@@ -75,32 +100,37 @@ class DocumentTests: XCTestCase {
                            variableDefinitions: [VariableDefinition(key: "count", type: "Int", value: .int(10))],
                            fields: [Field(name: "id")]))
 
-        XCTAssertEqual(namedDocument.accept(visitor: encodedPrinter),
+        XCTAssertEqual(namedDocument.accept(visitor: encodedStringFormatter),
             "query=query%20ProductList($count:%20Int)%20%7B%20id%20%7D%20%7B%22count%22:%2010%7D&" +
             "operationName=ProductList&variables=%7B%22count%22:%2010%7D")
     }
 
     func testServerParameterdRepresentation() {
-        var unnamedDocument = Document(queryOperation: QueryOperation(fields: [Field(name: "products")]))
-        unnamedDocument.append(fragment: Fragment(name: "idFragment", type: "Product", fields: [Field(name: "id")]))
+        let fragment = Fragment(name: "idFragment", type: "Product", fields: [Field(name: "id")])
+        var unnamedDocument = Document(queryOperation: QueryOperation(fields: [Field(name: "products", fragments: [fragment])]))
+        unnamedDocument.append(fragment: fragment)
 
-        let unnamedParameters = unnamedDocument.accept(visitor: parametersPrinter)
+        let unnamedParameters = unnamedDocument.accept(visitor: unencodedParametersFormatter)
 
         XCTAssertEqual(unnamedParameters.count, 1)
         XCTAssertEqual(unnamedParameters["query"] as! String,
-                       "%7B%20products%20%7D%20fragment%20idFragment%20on%20Product%20%7B%20id%20%7D")
+                       
+                       
+                       "{ products { ...idFragment } } fragment idFragment on Product { id }")
 
         let namedDocument = Document(queryOperation:
             QueryOperation(name: "ProductList",
                            variableDefinitions: [VariableDefinition(key: "count", type: "Int", value: .int(10))],
                            fields: [Field(name: "id")]))
 
-        let namedParameters = namedDocument.accept(visitor: parametersPrinter)
+        let namedParameters = namedDocument.accept(visitor: unencodedParametersFormatter)
 
         XCTAssertEqual(namedParameters.count, 3)
         XCTAssertEqual(namedParameters["query"] as! String,
-                       "query%20ProductList($count:%20Int)%20%7B%20id%20%7D%20%7B%22count%22:%2010%7D")
+                       
+                       
+                       "query ProductList($count: Int) { id }")
         XCTAssertEqual(namedParameters["operationName"] as! String, "ProductList")
-        XCTAssertEqual(namedParameters["variables"] as! String, "%7B%22count%22:%2010%7D")
+        XCTAssertEqual(namedParameters["variables"] as! String, "{\"count\": 10}")
     }
 }

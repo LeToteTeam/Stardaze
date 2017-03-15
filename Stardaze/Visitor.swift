@@ -7,7 +7,7 @@
 //
 
 /**
- An abstract base class for adding in printers and other objects that need to visit all the nodes in a hierarchy.
+ An abstract base class for string formatters and other objects that need to visit all the nodes in a hierarchy.
  */
 public class Visitor<T> {
     internal init() {}
@@ -29,6 +29,10 @@ public class Visitor<T> {
     }
 
     internal func visit(_: Fragment) -> T {
+        fatalError(virtualFunctionError)
+    }
+    
+    internal func visit(_: [Fragment]) -> T {
         fatalError(virtualFunctionError)
     }
 

@@ -10,11 +10,11 @@ import Stardaze
 import XCTest
 
 final class QueryOperationTests: XCTestCase {
-    let readablePrinter = ReadablePrinter()
+    let unencodedStringFormatter = UnencodedStringFormatter()
     func testUnnamed() {
         var query = QueryOperation(fields: [Field(name: "products", subFields: [Field(name: "id")])])
 
-        XCTAssertEqual(query.accept(visitor: readablePrinter),
+        XCTAssertEqual(query.accept(visitor: unencodedStringFormatter),
                        "{" +
                             "\n\tproducts {" +
                                 "\n\t\tid" +
@@ -23,7 +23,7 @@ final class QueryOperationTests: XCTestCase {
 
         query.append(field: Field(name: "custom_collections", subFields: [Field(name: "id")]))
 
-        XCTAssertEqual(query.accept(visitor: readablePrinter),
+        XCTAssertEqual(query.accept(visitor: unencodedStringFormatter),
                        "{" +
                             "\n\tproducts {" +
                                 "\n\t\tid" +
@@ -38,7 +38,7 @@ final class QueryOperationTests: XCTestCase {
             Field(name: "name")
             ])
 
-        XCTAssertEqual(query.accept(visitor: readablePrinter),
+        XCTAssertEqual(query.accept(visitor: unencodedStringFormatter),
                        "{" +
                             "\n\tproducts {" +
                                 "\n\t\tid" +
@@ -55,7 +55,7 @@ final class QueryOperationTests: XCTestCase {
         var query = QueryOperation(name: "ProductList",
                                    fields: [Field(name: "products", subFields: [Field(name: "id")])])
 
-        XCTAssertEqual(query.accept(visitor: readablePrinter),
+        XCTAssertEqual(query.accept(visitor: unencodedStringFormatter),
                        "query ProductList {" +
                             "\n\tproducts {" +
                                 "\n\t\tid" +
@@ -64,7 +64,7 @@ final class QueryOperationTests: XCTestCase {
 
         query.append(variableDefinition: VariableDefinition(key: "count", type: "Int", value: .int(10)))
 
-        XCTAssertEqual(query.accept(visitor: readablePrinter),
+        XCTAssertEqual(query.accept(visitor: unencodedStringFormatter),
                        "query ProductList($count: Int) {" +
                         "\n\tproducts {" +
                         "\n\t\tid" +
@@ -76,7 +76,7 @@ final class QueryOperationTests: XCTestCase {
             VariableDefinition(key: "color", type: "Enum", value: .enumeration("blue"))
             ])
 
-        XCTAssertEqual(query.accept(visitor: readablePrinter),
+        XCTAssertEqual(query.accept(visitor: unencodedStringFormatter),
                        "query ProductList($count: Int, $limit: Int, $color: Enum) {" +
                         "\n\tproducts {" +
                         "\n\t\tid" +
@@ -88,7 +88,7 @@ final class QueryOperationTests: XCTestCase {
             Field(name: "name")
             ])
 
-        XCTAssertEqual(query.accept(visitor: readablePrinter),
+        XCTAssertEqual(query.accept(visitor: unencodedStringFormatter),
                        "query ProductList($count: Int, $limit: Int, $color: Enum) {" +
                         "\n\tproducts {" +
                         "\n\t\tid" +
@@ -103,7 +103,7 @@ final class QueryOperationTests: XCTestCase {
                                       mutating: true,
                                       fields: [Field(name: "products", subFields: [Field(name: "id")])])
 
-        XCTAssertEqual(mutation.accept(visitor: readablePrinter),
+        XCTAssertEqual(mutation.accept(visitor: unencodedStringFormatter),
                        "mutation ProductList {" +
                         "\n\tproducts {" +
                         "\n\t\tid" +
@@ -112,7 +112,7 @@ final class QueryOperationTests: XCTestCase {
 
         mutation.append(variableDefinition: VariableDefinition(key: "count", type: "Int", value: .int(10)))
 
-        XCTAssertEqual(mutation.accept(visitor: readablePrinter),
+        XCTAssertEqual(mutation.accept(visitor: unencodedStringFormatter),
                        "mutation ProductList($count: Int) {" +
                         "\n\tproducts {" +
                         "\n\t\tid" +
@@ -124,7 +124,7 @@ final class QueryOperationTests: XCTestCase {
             VariableDefinition(key: "color", type: "Enum", value: .enumeration("blue"))
             ])
 
-        XCTAssertEqual(mutation.accept(visitor: readablePrinter),
+        XCTAssertEqual(mutation.accept(visitor: unencodedStringFormatter),
                        "mutation ProductList($count: Int, $limit: Int, $color: Enum) {" +
                         "\n\tproducts {" +
                         "\n\t\tid" +
@@ -136,7 +136,7 @@ final class QueryOperationTests: XCTestCase {
             Field(name: "name")
             ])
 
-        XCTAssertEqual(mutation.accept(visitor: readablePrinter),
+        XCTAssertEqual(mutation.accept(visitor: unencodedStringFormatter),
                        "mutation ProductList($count: Int, $limit: Int, $color: Enum) {" +
                         "\n\tproducts {" +
                         "\n\t\tid" +

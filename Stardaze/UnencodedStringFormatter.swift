@@ -1,5 +1,5 @@
 //
-//  ReadablePrinter.swift
+//  UnencodedStringFormatter.swift
 //  Stardaze
 //
 //  Created by William Wilson on 3/7/17.
@@ -7,22 +7,22 @@
 //
 
 /**
- The ReadablePrinter is used internally in creating the string that the EncodedPrinter uses. It may also be used for
- debugging issues with the query created by the EncodedPrinter.
+ The UnencodedStringFormatter is used internally. It may also be used for
+ debugging issues with the query.
  
-    let printer = ReadablePrinter()
+    let stringFormatter = UnencodedStringFormatter()
     let document = Document(...)
-    printer.visit(document: document) => {
-                                            ...
-                                         }
+    stringFormatter.visit(document: document) => {
+                                                    ...
+                                                 }
  
-    document.accept(visitor: printer) => {
-                                            ...
-                                         }
+    document.accept(visitor: stringFormatter) => {
+                                                    ...
+                                                 }
  */
-public final class ReadablePrinter: Visitor<String> {
+public final class UnencodedStringFormatter: Visitor<String> {
     /**
-     Initializes a readable printer.
+     Initializes an unencoded string formatter.
      */
     public override init() {}
 
@@ -305,6 +305,31 @@ public final class ReadablePrinter: Visitor<String> {
 
         finishedString.append("\n}")
 
+        return finishedString
+    }
+    
+    /**
+     Creates a String for Fragments
+     
+     ``` swift
+     visit(Fragment(name: "testFragment", type: "TestObject", fields: [Field(name: "id")])) =>
+     
+     "fragment testFragment on TestObject {
+          id
+     }"
+     
+     "fragment testFragment2 on TestObject {
+          id
+     }"
+     ```
+     */
+    public override func visit(_ fragments: [Fragment]) -> String {
+        var finishedString = ""
+        
+        for fragment in fragments {
+            finishedString.append(visit(fragment))
+        }
+        
         return finishedString
     }
 

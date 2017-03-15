@@ -10,11 +10,11 @@ import Stardaze
 import XCTest
 
 final class FragmentTests: XCTestCase {
-    let readablePrinter = ReadablePrinter()
+    let unencodedStringFormatter = UnencodedStringFormatter()
     let testFragment = Fragment(name: "testFragment", type: "TestObject", fields: [Field(name: "id")])
 
     func testUserDefinitionRepresentation() {
-        XCTAssertEqual(testFragment.accept(visitor: readablePrinter),
+        XCTAssertEqual(testFragment.accept(visitor: unencodedStringFormatter),
                        "fragment testFragment on TestObject {" +
                             "\n\tid" +
                         "\n}")
@@ -26,7 +26,7 @@ final class FragmentTests: XCTestCase {
             Field(name: "small_url")
             ]))
 
-        XCTAssertEqual(copy.accept(visitor: readablePrinter),
+        XCTAssertEqual(copy.accept(visitor: unencodedStringFormatter),
                        "fragment testFragment on TestObject {" +
                             "\n\tid," +
                             "\n\tcustomerPhotos: customer_photos {" +
@@ -44,7 +44,7 @@ final class FragmentTests: XCTestCase {
             Field(name: "title")
             ])
 
-        XCTAssertEqual(copy.accept(visitor: readablePrinter),
+        XCTAssertEqual(copy.accept(visitor: unencodedStringFormatter),
                        "fragment testFragment on TestObject {" +
                             "\n\tid," +
                             "\n\tcustomerPhotos: customer_photos {" +

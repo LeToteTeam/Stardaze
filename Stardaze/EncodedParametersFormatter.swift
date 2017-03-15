@@ -1,5 +1,5 @@
 //
-//  EncodedParametersPrinter.swift
+//  EncodedParametersFormatter.swift
 //  Stardaze
 //
 //  Created by William Wilson on 3/13/17.
@@ -7,15 +7,15 @@
 //
 
 /**
- The EncodedParametersPrinter is used to create a [String: Any] dictionary of parameters, a common format
- used by networking libraries to deal with url parameters
+ The EncodedParametersFormatter is used to create a [String: Any] 
+ dictionary of parameters with percent encoded strings as the values.
  */
-public final class EncodedParametersPrinter: Visitor<[String: Any]> {
-    let readablePrinter = ReadablePrinter()
+public final class EncodedParametersFormatter: Visitor<[String: Any]> {
+    let stringFormatter = UnencodedStringFormatter()
     let whitespaceRegexp = try! NSRegularExpression(pattern: "[ \t\n]+", options: [])
 
     /**
-     Initializes an encoded parameters printer
+     Initializes an encoded parameters formatter
      */
     public override init() {}
 
@@ -32,43 +32,43 @@ public final class EncodedParametersPrinter: Visitor<[String: Any]> {
      */
     public override func visit(_ document: Document) -> [String: Any] {
         let transformedQuery =
-            NSMutableString(string: readablePrinter.visit(document).replacingOccurrences(of: ",", with: ""))
+            NSMutableString(string: stringFormatter.visit(document.queryOperation).replacingOccurrences(of: ",", with: ""))
 
         transformedQuery.condenseWhitespace()
 
+        if let fragments = document.fragments {
+            let transformedFragments =
+                NSMutableString(string: stringFormatter.visit(fragments).replacingOccurrences(of: ",", with: ""))
+            transformedFragments.condenseWhitespace()
+            
+            transformedQuery.append(" ")
+            transformedQuery.append(String(transformedFragments))
+        }
+        
         guard let queryString = transformedQuery.addingPercentEncoding(withAllowedCharacters:
             CharacterSet.urlQueryAllowed) else {
             return [:]
         }
         var parameters = ["query": queryString]
 
-        guard let operationName = document.queryOperation.name?.addingPercentEncoding(withAllowedCharacters:
-            CharacterSet.urlQueryAllowed) else {
-                return parameters
+        if let operationName = document.queryOperation.name?.addingPercentEncoding(withAllowedCharacters:
+            CharacterSet.urlQueryAllowed) {
+            parameters["operationName"] = operationName
         }
 
-        parameters["operationName"] = operationName
-
-        let variablesMinusComas: String
 
         if let variableDefinitionList = document.queryOperation.variableDefinitions {
-            variablesMinusComas = readablePrinter.makeReadableVariableValueListString(variableDefinitionList:
-                variableDefinitionList)
-        } else {
-            variablesMinusComas = ""
+            let variablesMinusCommas = NSMutableString(string: stringFormatter.makeReadableVariableValueListString(variableDefinitionList:
+                variableDefinitionList))
+
+            variablesMinusCommas.condenseWhitespace()
+
+            if let variablesString = variablesMinusCommas.addingPercentEncoding(withAllowedCharacters:
+                CharacterSet.urlQueryAllowed) {
+                parameters["variables"] = variablesString
+            }
         }
-
-        let transformedVariables = NSMutableString(string: variablesMinusComas)
-
-        transformedVariables.condenseWhitespace()
-
-        guard let variablesString = transformedVariables.addingPercentEncoding(withAllowedCharacters:
-            CharacterSet.urlQueryAllowed) else {
-                return parameters
-        }
-
-        parameters["variables"] = variablesString
-
+        
         return parameters
     }
 
