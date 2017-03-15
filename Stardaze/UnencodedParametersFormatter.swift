@@ -6,6 +6,10 @@
 //  Copyright © 2017 LeTote. All rights reserved.
 //
 
+/**
+ The UnencodedParametersFormatter is used to create a [String: Any]
+ dictionary of parameters.
+ */
 public final class UnencodedParametersFormatter: Visitor<[String: Any]> {
     let stringFormatter = UnencodedStringFormatter()
     let whitespaceRegexp = try! NSRegularExpression(pattern: "[ \t\n]+", options: [])
@@ -30,7 +34,7 @@ public final class UnencodedParametersFormatter: Visitor<[String: Any]> {
     /**
      Creates an unencoded parameters dictionary for a Document with keys query, operationName, and variables
      */
-    internal override func visit(_ document: Document) -> [String : Any] {
+    public override func visit(_ document: Document) -> [String : Any] {
         let transformedQuery =
             NSMutableString(string: stringFormatter.visit(document.queryOperation).replacingOccurrences(of: ",", with: ""))
         
