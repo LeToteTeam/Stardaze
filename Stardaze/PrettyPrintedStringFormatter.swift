@@ -1,12 +1,12 @@
 //
-//  UnencodedStringFormatter.swift
+//  PrettyPrintedStringFormatter.swift
 //  Stardaze
 //
 //  Created by William Wilson on 3/7/17.
 //  Copyright © 2017 LeTote. All rights reserved.
 //
 
-internal struct UnencodedStringFormatter: Visitor {
+internal struct PrettyPrintedStringFormatter: Visitor {
     private func fragmentContents(fragment: Fragment, depth: Int) -> String {
         var finishedString = ""
 
@@ -140,16 +140,17 @@ internal struct UnencodedStringFormatter: Visitor {
     }
 
     internal func makeReadableVariableValueListString(variableDefinitionList: [VariableDefinition]) -> String {
-        var finishedString = "{"
+        var finishedString = "{\n"
 
         for (index, variableDefinition) in zip(0..<variableDefinitionList.count, variableDefinitionList) {
             if index != 0 {
-                finishedString.append(", ")
+                finishedString.append(",\n")
             }
+            finishedString.append("\t")
             finishedString.append(makeReadableVariableValueString(variableDefinition: variableDefinition))
         }
 
-        finishedString.append("}")
+        finishedString.append("\n}")
 
         return finishedString
     }

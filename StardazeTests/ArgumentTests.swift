@@ -14,7 +14,7 @@ final class ArgumentTests: XCTestCase {
         case blue
     }
 
-    let stringFormatter = UnencodedStringFormatter()
+    let stringFormatter = PrettyPrintedStringFormatter()
 
     func testBoolInitializer() {
         XCTAssertEqual(Argument(key: "bool", value: true).accept(visitor: stringFormatter), "bool: true")

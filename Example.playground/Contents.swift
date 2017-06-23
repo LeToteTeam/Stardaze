@@ -31,10 +31,10 @@ let productList = Field(name: "product_list", alias: "productList")
 
 let productDocument = Document(queryOperation: QueryOperation(fields: [productList]))
 
-print(title: "Readable String", text: productDocument.stringify(encoded: false))
-print(title: "Encoded", text: productDocument.stringify(encoded: true))
-print(title: "Parameters", text: productDocument.parameterize(encoded: false))
-print(title: "Encoded Parameters", text: productDocument.parameterize(encoded: true))
+print(title: "Readable String", text: productDocument.stringify(format: .prettyPrinted))
+print(title: "Encoded", text: productDocument.stringify(format: .encoded))
+print(title: "Parameters", text: productDocument.parameterize(format: .prettyPrinted))
+print(title: "Encoded Parameters", text: productDocument.parameterize(format: .encoded))
 
 /**
  # Using fragments
@@ -57,7 +57,7 @@ let fragmentedQuery = QueryOperation(name: "ProductList", fields: [fragmentedPro
 
 let fragmentedDocument = Document(queryOperation: fragmentedQuery, fragments: [photoFragment, identifiersFragment])
 
-print(title: "Fragemented Query", text: fragmentedDocument.stringify(encoded: false))
+print(title: "Fragemented Query", text: fragmentedDocument.stringify(format: .prettyPrinted))
 
 /**
  # Using variables
@@ -84,7 +84,4 @@ let variableQuery = QueryOperation(name: "ProductList",
 
 let variableDocument = Document(queryOperation: variableQuery)
 
-print(title: "Variable", text: variableDocument.stringify(encoded: false))
-
-print(title: "blah", text: variableDocument.parameterize(encoded: false))
-
+print(title: "Variable", text: variableDocument.stringify(format: .prettyPrinted))

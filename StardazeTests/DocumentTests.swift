@@ -18,17 +18,20 @@ final class DocumentTests: XCTestCase {
         ],
                                                                fields: ["products"]))
     func testUserRepresentation() {
-        XCTAssertEqual(testDocument.stringify(encoded: false),
+        XCTAssertEqual(testDocument.stringify(format: .prettyPrinted),
                        "query ProductList($count: Int) {" +
                             "\n\tproducts" +
                         "\n}" +
-                        "\n\n{\"count\": 10}")
+                        "\n" +
+                        "\n{" +
+                            "\n\t\"count\": 10" +
+                        "\n}")
 
         let withFragment = testDocument.appended(fragment: Fragment(name: "idFragment",
                                                                     type: "Product",
                                                                     fields: ["id"]))
 
-        XCTAssertEqual(withFragment.stringify(encoded: false),
+        XCTAssertEqual(withFragment.stringify(format: .prettyPrinted),
                        "query ProductList($count: Int) {" +
                         "\n\tproducts" +
             "\n}" +
@@ -36,7 +39,38 @@ final class DocumentTests: XCTestCase {
             "\nfragment idFragment on Product {" +
                 "\n\tid" +
             "\n}" +
-            "\n\n{\"count\": 10}")
+            "\n" +
+            "\n{" +
+                "\n\t\"count\": 10" +
+            "\n}")
+    }
+
+    func testCompactStringRepresentation() {
+        XCTAssertEqual(testDocument.stringify(format: .prettyPrinted),
+                       "query ProductList($count: Int) {" +
+                            "\n\tproducts" +
+                        "\n}" +
+                        "\n" +
+                        "\n{" +
+                            "\n\t\"count\": 10" +
+                        "\n}")
+
+        let withFragment = testDocument.appended(fragment: Fragment(name: "idFragment",
+                                                                    type: "Product",
+                                                                    fields: ["id"]))
+
+        XCTAssertEqual(withFragment.stringify(format: .prettyPrinted),
+                       "query ProductList($count: Int) {" +
+                            "\n\tproducts" +
+                        "\n}" +
+                        "\n" +
+                        "\nfragment idFragment on Product {" +
+                            "\n\tid" +
+                        "\n}" +
+                        "\n" +
+                        "\n{" +
+                            "\n\t\"count\": 10" +
+                        "\n}")
     }
 
     func testAppendingMultipleFragments() {
@@ -44,26 +78,16 @@ final class DocumentTests: XCTestCase {
             Fragment(name: "idFragment", type: "Product", fields: ["id"]),
             Fragment(name: "titleFragment", type: "Product", fields: ["title"])])
 
-        XCTAssertEqual(copy.stringify(encoded: false),
-                       "query ProductList($count: Int) {" +
-                        "\n\tproducts" +
-            "\n}" +
-            "\n" +
-            "\nfragment idFragment on Product {" +
-                "\n\tid" +
-            "\n}" +
-            "\n" +
-            "\nfragment titleFragment on Product {" +
-                "\n\ttitle" +
-            "\n}" +
-            "\n\n{\"count\": 10}")
+        XCTAssertEqual(copy.stringify(format: .compact),
+                       "query=query ProductList($count: Int) { products } fragment idFragment on Product { id }" +
+            "fragment titleFragment on Product { title }&operationName=ProductList&variables={ \"count\": 10 }")
     }
 
-    func testUnencodedParametersRepresentation() {
+    func testEncodedParametersRepresentation() {
         let unnamedDocument = Document(queryOperation: QueryOperation(fields: ["products"]))
             .appended(fragment: Fragment(name: "idFragment", type: "Product", fields: ["id"]))
 
-        let unnamedParameters = unnamedDocument.parameterize(encoded: true)
+        let unnamedParameters = unnamedDocument.parameterize(format: .encoded)
 
         XCTAssertEqual(unnamedParameters.count, 1)
         XCTAssertEqual(unnamedParameters["query"] as? String,
@@ -74,20 +98,20 @@ final class DocumentTests: XCTestCase {
                            variableDefinitions: [VariableDefinition(key: "count", type: "Int", value: 10)],
                            fields: ["id"]))
 
-        let namedParameters = namedDocument.parameterize(encoded: true)
+        let namedParameters = namedDocument.parameterize(format: .encoded)
 
         XCTAssertEqual(namedParameters.count, 3)
         XCTAssertEqual(namedParameters["query"] as? String,
                        "query%20ProductList($count:%20Int)%20%7B%20id%20%7D")
         XCTAssertEqual(namedParameters["operationName"] as? String, "ProductList")
-        XCTAssertEqual(namedParameters["variables"] as? String, "%7B%22count%22:%2010%7D")
+        XCTAssertEqual(namedParameters["variables"] as? String, "%7B%20%22count%22:%2010%20%7D")
     }
 
     func testServerRepresentation() {
         let unnamedDocument = Document(queryOperation: QueryOperation(fields: ["products"]))
             .appended(fragment: Fragment(name: "idFragment", type: "Product", fields: ["id"]))
 
-        XCTAssertEqual(unnamedDocument.stringify(encoded: true),
+        XCTAssertEqual(unnamedDocument.stringify(format: .encoded),
                        "query=%7B%20products%20%7D%20fragment%20idFragment%20on%20Product%20%7B%20id%20%7D")
 
         let namedDocument = Document(queryOperation:
@@ -95,23 +119,63 @@ final class DocumentTests: XCTestCase {
                            variableDefinitions: [VariableDefinition(key: "count", type: "Int", value: 10)],
                            fields: ["id"]))
 
-        XCTAssertEqual(namedDocument.stringify(encoded: true),
-            "query=query%20ProductList($count:%20Int)%20%7B%20id%20%7D%20%7B%22count%22:%2010%7D&" +
-            "operationName=ProductList&variables=%7B%22count%22:%2010%7D")
+        XCTAssertEqual(namedDocument.stringify(format: .encoded),
+            "query=query%20ProductList($count:%20Int)%20%7B%20id%20%7D" +
+            "&operationName=ProductList&variables=%7B%20%22count%22:%2010%20%7D")
     }
 
-    func testServerParameterdRepresentation() {
+    func testPrettyPrintedParametersRepresentation() {
         let fragment = Fragment(name: "idFragment", type: "Product", fields: ["id"])
 
         let unnamedDocument = Document(queryOperation: QueryOperation(fields: [Field(name: "products",
                                                                                      fragments: [fragment])]))
             .appended(fragment: fragment)
 
-        let unnamedParameters = unnamedDocument.parameterize(encoded: false)
+        let unnamedParameters = unnamedDocument.parameterize(format: .prettyPrinted)
 
         XCTAssertEqual(unnamedParameters.count, 1)
         XCTAssertEqual(unnamedParameters["query"] as? String,
 
+                       "{" +
+                            "\n\tproducts {" +
+                                "\n\t\t...idFragment" +
+                            "\n\t}" +
+                        "\n}" +
+                        "\n" +
+                        "\nfragment idFragment on Product {" +
+                            "\n\tid" +
+                        "\n}")
+
+        let namedDocument = Document(queryOperation:
+            QueryOperation(name: "ProductList",
+                           variableDefinitions: [VariableDefinition(key: "count", type: "Int", value: 10)],
+                           fields: ["id"]))
+
+        let namedParameters = namedDocument.parameterize(format: .prettyPrinted)
+
+        XCTAssertEqual(namedParameters.count, 3)
+        XCTAssertEqual(namedParameters["query"] as? String,
+
+                       "query ProductList($count: Int) {" +
+                            "\n\tid" +
+                        "\n}")
+        XCTAssertEqual(namedParameters["operationName"] as? String, "ProductList")
+        XCTAssertEqual(namedParameters["variables"] as? String, "{" +
+                                                                    "\n\t\"count\": 10" +
+                                                                "\n}")
+    }
+
+    func testCompactParamatersRepresentation() {
+        let fragment = Fragment(name: "idFragment", type: "Product", fields: ["id"])
+
+        let unnamedDocument = Document(queryOperation: QueryOperation(fields: [Field(name: "products",
+                                                                                     fragments: [fragment])]))
+            .appended(fragment: fragment)
+
+        let unnamedParameters = unnamedDocument.parameterize(format: .compact)
+
+        XCTAssertEqual(unnamedParameters.count, 1)
+        XCTAssertEqual(unnamedParameters["query"] as? String,
                        "{ products { ...idFragment } } fragment idFragment on Product { id }")
 
         let namedDocument = Document(queryOperation:
@@ -119,13 +183,11 @@ final class DocumentTests: XCTestCase {
                            variableDefinitions: [VariableDefinition(key: "count", type: "Int", value: 10)],
                            fields: ["id"]))
 
-        let namedParameters = namedDocument.parameterize(encoded: false)
+        let namedParameters = namedDocument.parameterize(format: .compact)
 
         XCTAssertEqual(namedParameters.count, 3)
-        XCTAssertEqual(namedParameters["query"] as? String,
-
-                       "query ProductList($count: Int) { id }")
+        XCTAssertEqual(namedParameters["query"] as? String, "query ProductList($count: Int) { id }")
         XCTAssertEqual(namedParameters["operationName"] as? String, "ProductList")
-        XCTAssertEqual(namedParameters["variables"] as? String, "{\"count\": 10}")
+        XCTAssertEqual(namedParameters["variables"] as? String, "{ \"count\": 10 }")
     }
 }

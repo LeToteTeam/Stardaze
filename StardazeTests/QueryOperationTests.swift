@@ -14,7 +14,7 @@ final class QueryOperationTests: XCTestCase {
         case blue
     }
 
-    let unencodedStringFormatter = UnencodedStringFormatter()
+    let unencodedStringFormatter = PrettyPrintedStringFormatter()
     func testUnnamed() {
         let query = QueryOperation(fields: [Field(name: "products", subFields: ["id"])])
 
