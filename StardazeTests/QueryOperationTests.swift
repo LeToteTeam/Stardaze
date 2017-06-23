@@ -31,7 +31,7 @@ final class QueryOperationTests: XCTestCase {
                        "{" +
                             "\n\tproducts {" +
                                 "\n\t\tid" +
-                            "\n\t}," +
+                            "\n\t}" +
                             "\n\tcustom_collections {" +
                                 "\n\t\tid" +
                             "\n\t}" +
@@ -43,11 +43,11 @@ final class QueryOperationTests: XCTestCase {
                        "{" +
                             "\n\tproducts {" +
                                 "\n\t\tid" +
-                            "\n\t}," +
+                            "\n\t}" +
                             "\n\tcustom_collections {" +
                                 "\n\t\tid" +
-                            "\n\t}," +
-                            "\n\ttitle," +
+                            "\n\t}" +
+                            "\n\ttitle" +
                             "\n\tname" +
                         "\n}")
     }
@@ -92,8 +92,8 @@ final class QueryOperationTests: XCTestCase {
                        "query ProductList($count: Int, $limit: Int, $color: Enum) {" +
                         "\n\tproducts {" +
                         "\n\t\tid" +
-                        "\n\t}," +
-                        "\n\ttitle," +
+                        "\n\t}" +
+                        "\n\ttitle" +
                         "\n\tname" +
             "\n}")
     }
@@ -139,8 +139,8 @@ final class QueryOperationTests: XCTestCase {
                        "mutation ProductList($count: Int, $limit: Int, $color: Enum) {" +
                         "\n\tproducts {" +
                         "\n\t\tid" +
-                        "\n\t}," +
-                        "\n\ttitle," +
+                        "\n\t}" +
+                        "\n\ttitle" +
                         "\n\tname" +
             "\n}")
     }

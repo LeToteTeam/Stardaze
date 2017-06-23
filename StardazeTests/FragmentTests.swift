@@ -26,7 +26,7 @@ final class FragmentTests: XCTestCase {
 
         XCTAssertEqual(copy.accept(visitor: unencodedStringFormatter),
                        "fragment testFragment on TestObject {" +
-                            "\n\tid," +
+                            "\n\tid" +
                             "\n\tcustomerPhotos: customer_photos {" +
                                 "\n\t\tsmall_url" +
                             "\n\t}" +
@@ -42,10 +42,10 @@ final class FragmentTests: XCTestCase {
 
         XCTAssertEqual(copy.accept(visitor: unencodedStringFormatter),
                        "fragment testFragment on TestObject {" +
-                            "\n\tid," +
+                            "\n\tid" +
                             "\n\tcustomerPhotos: customer_photos {" +
                                 "\n\t\tsmall_url" +
-                            "\n\t}," +
+                            "\n\t}" +
                             "\n\ttitle" +
                         "\n}")
     }

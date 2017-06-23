@@ -67,17 +67,24 @@ print(title: "Fragemented Query", text: fragmentedDocument.stringify(encoded: fa
  * When putting your fields into a query, put the associated variable definitions on the query as well.
  */
 
-let count = Variable("count")
-let countDefinition = VariableDefinition(key: "count", type: "Int", notNullable: true, value: 20)
+let count = Variable("counts")
+let countsDefinition = VariableDefinition(key: "counts", type: "[Int]", notNullable: true, value: [23, 45])
+
+let object = Variable("person")
+let objectDefinition = VariableDefinition(key: "person", type: "Person", value: ["name": "John",
+                                                                                 "age": 15])
 
 let variableProductList = Field(name: "product_list",
-                                arguments: [Argument(key: "count", value: count)],
+                                arguments: [Argument(key: "count", value: count), Argument(key: "person", value: object)],
                                 subFields: ["id", "title"])
 
 let variableQuery = QueryOperation(name: "ProductList",
-                                   variableDefinitions: [countDefinition],
+                                   variableDefinitions: [countsDefinition!, objectDefinition!],
                                    fields: [variableProductList])
 
 let variableDocument = Document(queryOperation: variableQuery)
 
 print(title: "Variable", text: variableDocument.stringify(encoded: false))
+
+print(title: "blah", text: variableDocument.parameterize(encoded: false))
+

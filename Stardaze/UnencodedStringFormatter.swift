@@ -76,7 +76,7 @@ internal struct UnencodedStringFormatter: Visitor {
             }
 
             if field.subFields != nil && field.fragments != nil {
-                finishedString.append(",\n")
+                finishedString.append("\n")
             }
 
             if let fragments = field.fragments {
@@ -98,7 +98,6 @@ internal struct UnencodedStringFormatter: Visitor {
 
         for (index, field) in zip(0..<fieldList.count, fieldList) {
             if index != 0 {
-                finishedString.append(",")
                 finishedString.append("\n")
             }
 
@@ -113,7 +112,6 @@ internal struct UnencodedStringFormatter: Visitor {
 
         for (index, fragment) in zip(0..<fragmentList.count, fragmentList) {
             if index != 0 {
-                finishedString.append(",")
                 finishedString.append("\n")
             }
 

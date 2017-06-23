@@ -109,7 +109,7 @@ final class FieldTests: XCTestCase {
 
         XCTAssertEqual(withTitleFragment.accept(visitor: unencodedStringFormatter),
                        "test_field {" +
-                            "\n\t...testFragment," +
+                            "\n\t...testFragment" +
                             "\n\t...titleFragment" +
                         "\n}")
 
@@ -121,8 +121,8 @@ final class FieldTests: XCTestCase {
                        "test_field {" +
                             "\n\tcustomer_photos {" +
                                 "\n\t\tmedium_url" +
-                            "\n\t}," +
-                            "\n\t...testFragment," +
+                            "\n\t}" +
+                            "\n\t...testFragment" +
                             "\n\t...titleFragment" +
                         "\n}")
     }
@@ -135,7 +135,7 @@ final class FieldTests: XCTestCase {
 
         XCTAssertEqual(copy.accept(visitor: unencodedStringFormatter),
                        "test_field {" +
-                            "\n\t...testFragment," +
+                            "\n\t...testFragment" +
                             "\n\t...titleFragment" +
                         "\n}")
     }
@@ -145,7 +145,7 @@ final class FieldTests: XCTestCase {
 
         XCTAssertEqual(copy.accept(visitor: unencodedStringFormatter),
                        "test_field {" +
-                            "\n\tid," +
+                            "\n\tid" +
                             "\n\ttitle" +
                         "\n}")
     }
