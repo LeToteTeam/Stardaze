@@ -12,12 +12,14 @@
  from here.
  */
 public struct Document {
-    private let encodedParametersFormatter = EncodedParametersFormatter()
-    private let encodedStringFormatter = EncodedStringFormatter()
+    private let compactParametersFormatter = CompactParametersFormatter(encoded: false)
+    private let compactStringFormatter = CompactStringFormatter(encoded: false)
+    private let encodedParametersFormatter = CompactParametersFormatter(encoded: true)
+    private let encodedStringFormatter = CompactStringFormatter(encoded: true)
     internal var fragments: [Fragment]?
     internal let queryOperation: QueryOperation
-    private let unencodedParametersFormatter = UnencodedParametersFormatter()
-    private let unecodedStringFormatter = UnencodedStringFormatter()
+    private let unencodedParametersFormatter = PrettyPrintedParametersFormatter()
+    private let unecodedStringFormatter = PrettyPrintedStringFormatter()
 
     /**
      The primary initializer. The query operation should be fully formed before passing it in here.
@@ -101,8 +103,17 @@ public struct Document {
      
      - returns: A parameters dictionary.
      */
-    public func parameterize(encoded: Bool) -> [String: Any] {
-        return encoded ? accept(visitor: encodedParametersFormatter) : accept(visitor: unencodedParametersFormatter)
+    public func parameterize(format: OutputOption) -> [String: Any] {
+        switch format {
+        case .compact:
+            return accept(visitor: compactParametersFormatter)
+
+        case .encoded:
+            return accept(visitor: encodedParametersFormatter)
+
+        case .prettyPrinted:
+            return accept(visitor: unencodedParametersFormatter)
+        }
     }
 
     /**
@@ -112,8 +123,17 @@ public struct Document {
      
      - returns: A string representation of the document.
      */
-    public func stringify(encoded: Bool) -> String {
-        return encoded ? accept(visitor: encodedStringFormatter) : accept(visitor: unecodedStringFormatter)
+    public func stringify(format: OutputOption) -> String {
+        switch format {
+        case .compact:
+            return accept(visitor: compactStringFormatter)
+
+        case .encoded:
+            return accept(visitor: encodedStringFormatter)
+
+        case .prettyPrinted:
+            return accept(visitor: unecodedStringFormatter)
+        }
     }
 }
 

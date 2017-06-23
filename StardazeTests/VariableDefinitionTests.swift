@@ -14,7 +14,7 @@ final class VariableDefinitionTests: XCTestCase {
         case blue
     }
 
-    let stringFormatter = UnencodedStringFormatter()
+    let stringFormatter = PrettyPrintedStringFormatter()
 
     func testBoolInitializer() {
         XCTAssertEqual(VariableDefinition(key: "testString",

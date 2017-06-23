@@ -10,7 +10,7 @@
 import XCTest
 
 final class GraphQLObjectTests {
-    let unencodedStringFormatter = UnencodedStringFormatter()
+    let unencodedStringFormatter = PrettyPrintedStringFormatter()
 
     func testStringFormatting() {
         XCTAssertEqual(GraphQLObject(["hello": "world"]).accept(visitor: unencodedStringFormatter), "{hello: \"world\"")

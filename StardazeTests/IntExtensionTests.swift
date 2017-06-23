@@ -10,7 +10,7 @@
 import XCTest
 
 final class IntExtensionTests: XCTestCase {
-    let unencodedStringFormatter = UnencodedStringFormatter()
+    let unencodedStringFormatter = PrettyPrintedStringFormatter()
 
     func testStringFormatting() {
         XCTAssertEqual(3829.accept(visitor: unencodedStringFormatter), "3829")

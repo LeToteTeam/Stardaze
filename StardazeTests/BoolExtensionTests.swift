@@ -10,7 +10,7 @@
 import XCTest
 
 final class BoolExtensionTests: XCTestCase {
-    let unencodedStringFormatter = UnencodedStringFormatter()
+    let unencodedStringFormatter = PrettyPrintedStringFormatter()
 
     func testStringFormatting() {
         XCTAssertEqual(false.accept(visitor: unencodedStringFormatter), "false")

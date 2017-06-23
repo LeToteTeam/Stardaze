@@ -22,7 +22,7 @@ let document = Document(queryOperation: queryOperation)
 print(document.stringify(encoded: false))
 // {
 //     productList: product_list(is_awesome: true, color: blue) {
-//         id,
+//         id
 //         title
 //     }
 // }

@@ -10,7 +10,7 @@
 import XCTest
 
 final class FragmentTests: XCTestCase {
-    let unencodedStringFormatter = UnencodedStringFormatter()
+    let unencodedStringFormatter = PrettyPrintedStringFormatter()
     let testFragment = Fragment(name: "testFragment", type: "TestObject", fields: ["id"])
 
     func testUserDefinitionRepresentation() {
@@ -26,7 +26,7 @@ final class FragmentTests: XCTestCase {
 
         XCTAssertEqual(copy.accept(visitor: unencodedStringFormatter),
                        "fragment testFragment on TestObject {" +
-                            "\n\tid," +
+                            "\n\tid" +
                             "\n\tcustomerPhotos: customer_photos {" +
                                 "\n\t\tsmall_url" +
                             "\n\t}" +
@@ -42,10 +42,10 @@ final class FragmentTests: XCTestCase {
 
         XCTAssertEqual(copy.accept(visitor: unencodedStringFormatter),
                        "fragment testFragment on TestObject {" +
-                            "\n\tid," +
+                            "\n\tid" +
                             "\n\tcustomerPhotos: customer_photos {" +
                                 "\n\t\tsmall_url" +
-                            "\n\t}," +
+                            "\n\t}" +
                             "\n\ttitle" +
                         "\n}")
     }

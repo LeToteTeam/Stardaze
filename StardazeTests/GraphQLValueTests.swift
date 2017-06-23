@@ -14,7 +14,7 @@ final class GraphQLListTests: XCTestCase {
         case blue
     }
 
-    let unencodedStringFormatter = UnencodedStringFormatter()
+    let unencodedStringFormatter = PrettyPrintedStringFormatter()
 
     func testStringRepresentation() {
         XCTAssertEqual(GraphQLList([

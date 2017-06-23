@@ -1,13 +1,13 @@
 //
-//  UnencodedParametersFormatter.swift
+//  PrettyPrintedParametersFormatter.swift
 //  Stardaze
 //
 //  Created by William Wilson on 3/15/17.
 //  Copyright © 2017 LeTote. All rights reserved.
 //
 
-internal struct UnencodedParametersFormatter: Visitor {
-    let stringFormatter = UnencodedStringFormatter()
+internal struct PrettyPrintedParametersFormatter: Visitor {
+    let stringFormatter = PrettyPrintedStringFormatter()
 
     internal func visit(_: Argument) -> [String : Any] {
         return [:]
@@ -26,14 +26,11 @@ internal struct UnencodedParametersFormatter: Visitor {
             NSMutableString(string: stringFormatter.visit(document.queryOperation).replacingOccurrences(of: ",",
                                                                                                         with: ""))
 
-        transformedQuery.condenseWhitespace()
-
         if let fragments = document.fragments {
             let transformedFragments =
                 NSMutableString(string: stringFormatter.visit(fragments).replacingOccurrences(of: ",", with: ""))
-            transformedFragments.condenseWhitespace()
 
-            transformedQuery.append(" ")
+            transformedQuery.append("\n\n")
             transformedQuery.append(String(transformedFragments))
         }
         var parameters  = ["query": String(transformedQuery)]
@@ -47,7 +44,6 @@ internal struct UnencodedParametersFormatter: Visitor {
                 stringFormatter.makeReadableVariableValueListString(variableDefinitionList: variablesDefinitionList)
 
             let transformedVariables = NSMutableString(string: variablesMinusCommas)
-            transformedVariables.condenseWhitespace()
 
             parameters["variables"] = String(transformedVariables)
         }

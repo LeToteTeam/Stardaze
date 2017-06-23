@@ -1,13 +1,18 @@
 //
-//  EncodedParametersFormatter.swift
+//  CompactParametersFormatter.swift
 //  Stardaze
 //
 //  Created by William Wilson on 3/13/17.
 //  Copyright © 2017 LeTote. All rights reserved.
 //
 
-internal struct EncodedParametersFormatter: Visitor {
-    let stringFormatter = UnencodedStringFormatter()
+internal struct CompactParametersFormatter: Visitor {
+    let encoded: Bool
+    let stringFormatter = PrettyPrintedStringFormatter()
+
+    init(encoded: Bool) {
+        self.encoded = encoded
+    }
 
     internal func visit(_: Argument) -> [String: Any] {
         return [:]
@@ -37,28 +42,43 @@ internal struct EncodedParametersFormatter: Visitor {
             transformedQuery.append(String(transformedFragments))
         }
 
-        guard let queryString = transformedQuery.addingPercentEncoding(withAllowedCharacters:
-            CharacterSet.urlQueryAllowed) else {
-            return [:]
+        var parameters: [String: String]
+        if encoded {
+            guard let queryString = transformedQuery.addingPercentEncoding(withAllowedCharacters:
+                CharacterSet.urlQueryAllowed) else {
+                    return [:]
+            }
+
+            parameters = ["query": queryString]
+        } else {
+            parameters = ["query": transformedQuery as String]
         }
 
-        var parameters = ["query": queryString]
-
-        if let operationName = document.queryOperation.name?.addingPercentEncoding(withAllowedCharacters:
-            CharacterSet.urlQueryAllowed) {
-            parameters["operationName"] = operationName
+        if encoded {
+            if let operationName = document.queryOperation.name?.addingPercentEncoding(withAllowedCharacters:
+                CharacterSet.urlQueryAllowed) {
+                parameters["operationName"] = operationName
+            }
+        } else {
+            if let operationName = document.queryOperation.name {
+                parameters["operationName"] = operationName
+            }
         }
 
         if let variableDefinitionList = document.queryOperation.variableDefinitions {
-            let variablesMinusCommas =
+            let variablesStripped =
                 NSMutableString(string: stringFormatter.makeReadableVariableValueListString(variableDefinitionList:
                     variableDefinitionList))
 
-            variablesMinusCommas.condenseWhitespace()
+            variablesStripped.condenseWhitespace()
 
-            if let variablesString = variablesMinusCommas.addingPercentEncoding(withAllowedCharacters:
-                CharacterSet.urlQueryAllowed) {
-                parameters["variables"] = variablesString
+            if encoded {
+                if let variablesString = variablesStripped.addingPercentEncoding(withAllowedCharacters:
+                    CharacterSet.urlQueryAllowed) {
+                    parameters["variables"] = variablesString as String
+                }
+            } else {
+                parameters["variables"] = variablesStripped as String
             }
         }
 

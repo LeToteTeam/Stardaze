@@ -1,13 +1,18 @@
 //
-//  EncodedStringFormatter.swift
+//  CompactStringFormatter.swift
 //  Stardaze
 //
 //  Created by William Wilson on 3/8/17.
 //  Copyright © 2017 LeTote. All rights reserved.
 //
 
-internal struct EncodedStringFormatter: Visitor {
-    private let unencodedStringFormatter = UnencodedStringFormatter()
+internal struct CompactStringFormatter: Visitor {
+    let encoded: Bool
+    private let unencodedStringFormatter = PrettyPrintedStringFormatter()
+
+    internal init(encoded: Bool) {
+        self.encoded = encoded
+    }
 
     internal func visit(_ argument: Argument) -> String {
         return ""
@@ -23,7 +28,19 @@ internal struct EncodedStringFormatter: Visitor {
 
     internal func visit(_ document: Document) -> String {
         let transformedQuery =
-            NSMutableString(string: unencodedStringFormatter.visit(document).replacingOccurrences(of: ",", with: ""))
+            NSMutableString(string: unencodedStringFormatter.visit(document.queryOperation)
+                .replacingOccurrences(of: ",", with: ""))
+
+        if let fragments = document.fragments {
+            let transformedFragments =
+                NSMutableString(string: unencodedStringFormatter.visit(fragments)
+                    .replacingOccurrences(of: ",", with: ""))
+
+            transformedFragments.condenseWhitespace()
+
+            transformedQuery.append(" ")
+            transformedQuery.append(String(transformedFragments))
+        }
 
         transformedQuery.condenseWhitespace()
 
@@ -37,26 +54,30 @@ internal struct EncodedStringFormatter: Visitor {
                 return "query=\(queryString)"
         }
 
-        let variablesMinusCommas: String
+        let variablesString: String
 
         if let variableDefinitionList = document.queryOperation.variableDefinitions {
-            variablesMinusCommas =
+            variablesString =
                 unencodedStringFormatter.makeReadableVariableValueListString(variableDefinitionList:
                     variableDefinitionList)
         } else {
-            variablesMinusCommas = ""
+            variablesString = ""
         }
 
-        let transformedVariables = NSMutableString(string: variablesMinusCommas)
+        let transformedVariables = NSMutableString(string: variablesString)
 
         transformedVariables.condenseWhitespace()
 
-        guard let variablesString =
-            transformedVariables.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) else {
-                return "query=\(queryString)&operationName=\(operationName)"
-        }
+        if encoded {
+            guard let variablesString =
+                transformedVariables.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) else {
+                    return "query=\(queryString)&operationName=\(operationName)"
+            }
 
-        return "query=\(queryString)&operationName=\(operationName)&variables=\(variablesString)"
+            return "query=\(queryString)&operationName=\(operationName)&variables=\(variablesString)"
+        } else {
+            return "query=\(transformedQuery)&operationName=\(operationName)&variables=\(transformedVariables)"
+        }
     }
 
     internal func visit(_: Double) -> String {
