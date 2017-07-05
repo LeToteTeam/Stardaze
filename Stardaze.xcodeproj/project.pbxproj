@@ -17,7 +17,6 @@
 		7B5A07241E842F33005509B3 /* StringExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5A07231E842F33005509B3 /* StringExtensionTests.swift */; };
 		7B5A07261E8431CB005509B3 /* GraphQLObjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5A07251E8431CB005509B3 /* GraphQLObjectTests.swift */; };
 		7B5A07281E84603A005509B3 /* GraphQLValueError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5A07271E84603A005509B3 /* GraphQLValueError.swift */; };
-		7B5B58381E77135E005407F4 /* CompactParametersFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5B58371E77135E005407F4 /* CompactParametersFormatter.swift */; };
 		7B71DC361E4A856A0081790A /* Stardaze.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B71DC2C1E4A856A0081790A /* Stardaze.framework */; };
 		7B71DC3D1E4A856A0081790A /* Stardaze.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B71DC2F1E4A856A0081790A /* Stardaze.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7B71DC471E4A85990081790A /* Field.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B71DC461E4A85990081790A /* Field.swift */; };
@@ -47,7 +46,6 @@
 		7BF0BFC01E4BEC4800E56EDE /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BF0BFBF1E4BEC4800E56EDE /* Document.swift */; };
 		7BF0BFC21E4CD67600E56EDE /* VariableDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BF0BFC11E4CD67600E56EDE /* VariableDefinition.swift */; };
 		7BF0BFC41E4CF32D00E56EDE /* Directive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BF0BFC31E4CF32D00E56EDE /* Directive.swift */; };
-		7BFC90981E79982700C069AD /* PrettyPrintedParametersFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BFC90971E79982700C069AD /* PrettyPrintedParametersFormatter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,7 +70,6 @@
 		7B5A07231E842F33005509B3 /* StringExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensionTests.swift; sourceTree = "<group>"; };
 		7B5A07251E8431CB005509B3 /* GraphQLObjectTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GraphQLObjectTests.swift; sourceTree = "<group>"; };
 		7B5A07271E84603A005509B3 /* GraphQLValueError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GraphQLValueError.swift; sourceTree = "<group>"; };
-		7B5B58371E77135E005407F4 /* CompactParametersFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompactParametersFormatter.swift; sourceTree = "<group>"; };
 		7B71DC2C1E4A856A0081790A /* Stardaze.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Stardaze.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B71DC2F1E4A856A0081790A /* Stardaze.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Stardaze.h; sourceTree = "<group>"; };
 		7B71DC301E4A856A0081790A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -105,7 +102,6 @@
 		7BF0BFBF1E4BEC4800E56EDE /* Document.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Document.swift; sourceTree = "<group>"; };
 		7BF0BFC11E4CD67600E56EDE /* VariableDefinition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VariableDefinition.swift; sourceTree = "<group>"; };
 		7BF0BFC31E4CF32D00E56EDE /* Directive.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Directive.swift; sourceTree = "<group>"; };
-		7BFC90971E79982700C069AD /* PrettyPrintedParametersFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrettyPrintedParametersFormatter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,7 +150,6 @@
 				7BF0BFC31E4CF32D00E56EDE /* Directive.swift */,
 				7BF0BFBF1E4BEC4800E56EDE /* Document.swift */,
 				7BA2DF651E81FA42008232CC /* DoubleExtension.swift */,
-				7B5B58371E77135E005407F4 /* CompactParametersFormatter.swift */,
 				7B71DC461E4A85990081790A /* Field.swift */,
 				7BF0BFAF1E4BA41900E56EDE /* Fragment.swift */,
 				7BA2DF691E820263008232CC /* GraphQLEnum.swift */,
@@ -168,7 +163,6 @@
 				7BE692B41E71CBA50097874B /* Receiver.swift */,
 				7B71DC2F1E4A856A0081790A /* Stardaze.h */,
 				7BA2DF751E82EC1D008232CC /* StringExtension.swift */,
-				7BFC90971E79982700C069AD /* PrettyPrintedParametersFormatter.swift */,
 				7B792B2B1E6F392C00DE404E /* OutputFormatter.swift */,
 				7BF0BFB31E4BDA3300E56EDE /* Variable.swift */,
 				7BF0BFC11E4CD67600E56EDE /* VariableDefinition.swift */,
@@ -316,7 +310,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				7B792B2C1E6F392C00DE404E /* OutputFormatter.swift in Sources */,
-				7BFC90981E79982700C069AD /* PrettyPrintedParametersFormatter.swift in Sources */,
 				7B3B2B241E7857690086F169 /* NSMutableStringExtension.swift in Sources */,
 				7BF0BFAC1E4B9DE000E56EDE /* QueryOperation.swift in Sources */,
 				7BA2DF6E1E82E7FA008232CC /* IntExtension.swift in Sources */,
@@ -338,7 +331,6 @@
 				7BA2DF641E81F9FC008232CC /* BoolExtension.swift in Sources */,
 				7BF0BFC41E4CF32D00E56EDE /* Directive.swift in Sources */,
 				7BA2DF741E82EB78008232CC /* GraphQLObject.swift in Sources */,
-				7B5B58381E77135E005407F4 /* CompactParametersFormatter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

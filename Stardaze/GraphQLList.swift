@@ -15,7 +15,7 @@ internal struct GraphQLList {
 }
 
 extension GraphQLList: Receiver {
-    internal func accept<V: Visitor>(visitor: V) -> V.T {
+    internal func accept(visitor: Visitor) -> String {
         return visitor.visit(list)
     }
 }

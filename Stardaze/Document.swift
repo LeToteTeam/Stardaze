@@ -12,13 +12,13 @@
  from here.
  */
 public struct Document {
-    private let compactParametersFormatter = CompactParametersFormatter(encoded: false)
+    private let compactParametersFormatter = OutputFormatter(outputOption: .compact, parameterize: true)
     private let compactStringFormatter = OutputFormatter(outputOption: .compact, parameterize: false)
-    private let encodedParametersFormatter = CompactParametersFormatter(encoded: true)
+    private let encodedParametersFormatter = OutputFormatter(outputOption: .encoded, parameterize: true)
     private let encodedStringFormatter = OutputFormatter(outputOption: .encoded, parameterize: false)
     internal var fragments: [Fragment]?
     internal let queryOperation: QueryOperation
-    private let unencodedParametersFormatter = PrettyPrintedParametersFormatter()
+    private let unencodedParametersFormatter = OutputFormatter(outputOption: .prettyPrinted, parameterize: true)
     private let unecodedStringFormatter = OutputFormatter(outputOption: .prettyPrinted, parameterize: false)
 
     /**
@@ -106,13 +106,13 @@ public struct Document {
     public func parameterize(format: OutputOption) -> [String: Any] {
         switch format {
         case .compact:
-            return accept(visitor: compactParametersFormatter)
+            return compactParametersFormatter.visit(self)
 
         case .encoded:
-            return accept(visitor: encodedParametersFormatter)
+            return encodedParametersFormatter.visit(self)
 
         case .prettyPrinted:
-            return accept(visitor: unencodedParametersFormatter)
+            return unencodedParametersFormatter.visit(self)
         }
     }
 
@@ -126,19 +126,13 @@ public struct Document {
     public func stringify(format: OutputOption) -> String {
         switch format {
         case .compact:
-            return accept(visitor: compactStringFormatter)
+            return compactStringFormatter.visit(self)
 
         case .encoded:
-            return accept(visitor: encodedStringFormatter)
+            return encodedStringFormatter.visit(self)
 
         case .prettyPrinted:
-            return accept(visitor: unecodedStringFormatter)
+            return unecodedStringFormatter.visit(self)
         }
-    }
-}
-
-extension Document: Receiver {
-    internal func accept<V: Visitor>(visitor: V) -> V.T {
-        return visitor.visit(self)
     }
 }

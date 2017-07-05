@@ -79,6 +79,65 @@ internal struct OutputFormatter: Visitor {
         }
     }
 
+    private func makeCompactDocumentParameters(document: Document) -> [String: Any] {
+        let transformedQuery =
+            NSMutableString(string: visit(document.queryOperation).replacingOccurrences(of: ",",
+                                                                                                        with: ""))
+
+        transformedQuery.condenseWhitespace()
+
+        if let fragments = document.fragments {
+            let transformedFragments =
+                NSMutableString(string: visit(fragments).replacingOccurrences(of: ",", with: ""))
+            transformedFragments.condenseWhitespace()
+
+            transformedQuery.append(" ")
+            transformedQuery.append(String(transformedFragments))
+        }
+
+        var parameters: [String: String]
+        if outputOption == .encoded {
+            guard let queryString = transformedQuery.addingPercentEncoding(withAllowedCharacters:
+                CharacterSet.urlQueryAllowed) else {
+                    return [:]
+            }
+
+            parameters = ["query": queryString]
+        } else {
+            parameters = ["query": transformedQuery as String]
+        }
+
+        if outputOption == .encoded {
+            if let operationName = document.queryOperation.name?.addingPercentEncoding(withAllowedCharacters:
+                CharacterSet.urlQueryAllowed) {
+                parameters["operationName"] = operationName
+            }
+        } else {
+            if let operationName = document.queryOperation.name {
+                parameters["operationName"] = operationName
+            }
+        }
+
+        if let variableDefinitionList = document.queryOperation.variableDefinitions {
+            let variablesStripped =
+                NSMutableString(string: makeReadableVariableValueListString(variableDefinitionList:
+                    variableDefinitionList))
+
+            variablesStripped.condenseWhitespace()
+
+            if outputOption == .encoded {
+                if let variablesString = variablesStripped.addingPercentEncoding(withAllowedCharacters:
+                    CharacterSet.urlQueryAllowed) {
+                    parameters["variables"] = variablesString as String
+                }
+            } else {
+                parameters["variables"] = variablesStripped as String
+            }
+        }
+
+        return parameters
+    }
+
     private func makeReadableSingleLineString(receiverList: [Receiver]) -> String {
         var finishedString = ""
 
@@ -258,6 +317,40 @@ internal struct OutputFormatter: Visitor {
             }
 
             return finishedString
+        }
+    }
+
+    internal func visit(_ document: Document) -> [String: Any] {
+        if outputOption == .compact || outputOption == .encoded {
+            return makeCompactDocumentParameters(document: document)
+        } else {
+            let transformedQuery =
+                NSMutableString(string: visit(document.queryOperation).replacingOccurrences(of: ",",
+                                                                                            with: ""))
+
+            if let fragments = document.fragments {
+                let transformedFragments =
+                    NSMutableString(string: visit(fragments).replacingOccurrences(of: ",", with: ""))
+
+                transformedQuery.append("\n\n")
+                transformedQuery.append(String(transformedFragments))
+            }
+            var parameters  = ["query": String(transformedQuery)]
+
+            if let name = document.queryOperation.name {
+                parameters["operationName"] = name
+            }
+
+            if let variablesDefinitionList = document.queryOperation.variableDefinitions {
+                let variablesMinusCommas =
+                    makeReadableVariableValueListString(variableDefinitionList: variablesDefinitionList)
+
+                let transformedVariables = NSMutableString(string: variablesMinusCommas)
+
+                parameters["variables"] = String(transformedVariables)
+            }
+
+            return parameters
         }
     }
 

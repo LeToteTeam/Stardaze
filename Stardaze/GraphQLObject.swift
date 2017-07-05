@@ -15,7 +15,7 @@ internal struct GraphQLObject {
 }
 
 extension GraphQLObject: Receiver {
-    internal func accept<V: Visitor>(visitor: V) -> V.T {
+    internal func accept(visitor: Visitor) -> String {
         return visitor.visit(object)
     }
 }

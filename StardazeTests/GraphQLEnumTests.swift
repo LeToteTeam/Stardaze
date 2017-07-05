@@ -9,7 +9,7 @@
 @testable import Stardaze
 import XCTest
 
-final class GraphQLEnumTests {
+final class GraphQLEnumTests: XCTestCase {
     enum TestColor: String {
         case red
     }
