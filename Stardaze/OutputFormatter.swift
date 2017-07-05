@@ -1,12 +1,20 @@
 //
-//  PrettyPrintedStringFormatter.swift
+//  OutputFormatter.swift
 //  Stardaze
 //
 //  Created by William Wilson on 3/7/17.
 //  Copyright © 2017 LeTote. All rights reserved.
 //
 
-internal struct PrettyPrintedStringFormatter: Visitor {
+internal struct OutputFormatter: Visitor {
+    private var outputOption: OutputOption
+    private var parameterize: Bool
+
+    internal init(outputOption: OutputOption, parameterize: Bool) {
+        self.outputOption = outputOption
+        self.parameterize = parameterize
+    }
+
     private func fragmentContents(fragment: Fragment, depth: Int) -> String {
         var finishedString = ""
 
@@ -15,6 +23,60 @@ internal struct PrettyPrintedStringFormatter: Visitor {
         finishedString.append("...\(fragment.name)")
 
         return finishedString
+    }
+
+    private func makeCompactDocumentString(document: Document) -> String {
+        let transformedQuery =
+            NSMutableString(string: visit(document.queryOperation)
+                .replacingOccurrences(of: ",", with: ""))
+
+        if let fragments = document.fragments {
+            let transformedFragments =
+                NSMutableString(string: visit(fragments)
+                    .replacingOccurrences(of: ",", with: ""))
+
+            transformedFragments.condenseWhitespace()
+
+            transformedQuery.append(" ")
+            transformedQuery.append(String(transformedFragments))
+        }
+
+        transformedQuery.condenseWhitespace()
+
+        guard let queryString = transformedQuery.addingPercentEncoding(withAllowedCharacters:
+            CharacterSet.urlQueryAllowed) else {
+                return ""
+        }
+
+        guard let operationName = document.queryOperation.name?.addingPercentEncoding(withAllowedCharacters:
+            CharacterSet.urlQueryAllowed) else {
+                return "query=\(queryString)"
+        }
+
+        let variablesString: String
+
+        if let variableDefinitionList = document.queryOperation.variableDefinitions {
+            variablesString =
+                makeReadableVariableValueListString(variableDefinitionList:
+                    variableDefinitionList)
+        } else {
+            variablesString = ""
+        }
+
+        let transformedVariables = NSMutableString(string: variablesString)
+
+        transformedVariables.condenseWhitespace()
+
+        if outputOption == .encoded {
+            guard let variablesString =
+                transformedVariables.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) else {
+                    return "query=\(queryString)&operationName=\(operationName)"
+            }
+
+            return "query=\(queryString)&operationName=\(operationName)&variables=\(variablesString)"
+        } else {
+            return "query=\(transformedQuery)&operationName=\(operationName)&variables=\(transformedVariables)"
+        }
     }
 
     private func makeReadableSingleLineString(receiverList: [Receiver]) -> String {
@@ -177,21 +239,26 @@ internal struct PrettyPrintedStringFormatter: Visitor {
     }
 
     internal func visit(_ document: Document) -> String {
-        var finishedString = visit(document.queryOperation)
-        if let fragments = document.fragments, fragments.count > 0 {
-            for fragment in fragments {
-                finishedString.append("\n\n")
-                finishedString.append(visit(fragment))
+        if outputOption == .compact || outputOption == .encoded {
+            return makeCompactDocumentString(document: document)
+        } else {
+            var finishedString = visit(document.queryOperation)
+            if let fragments = document.fragments, fragments.count > 0 {
+                for fragment in fragments {
+                    finishedString.append("\n\n")
+                    finishedString.append(visit(fragment))
+                }
             }
+
+            if let variableDefinitionList = document.queryOperation.variableDefinitions {
+                finishedString.append("\n\n")
+
+                finishedString.append(makeReadableVariableValueListString(variableDefinitionList:
+                    variableDefinitionList))
+            }
+
+            return finishedString
         }
-
-        if let variableDefinitionList = document.queryOperation.variableDefinitions {
-            finishedString.append("\n\n")
-
-            finishedString.append(makeReadableVariableValueListString(variableDefinitionList: variableDefinitionList))
-        }
-
-        return finishedString
     }
 
     internal func visit(_ double: Double) -> String {
@@ -221,7 +288,11 @@ internal struct PrettyPrintedStringFormatter: Visitor {
     internal func visit(_ fragments: [Fragment]) -> String {
         var finishedString = ""
 
-        for fragment in fragments {
+        for (index, fragment) in zip((0..<fragments.count), fragments) {
+            if index != 0 {
+                finishedString.append("\n\n")
+            }
+
             finishedString.append(visit(fragment))
         }
 

@@ -8,7 +8,7 @@
 
 internal struct CompactParametersFormatter: Visitor {
     let encoded: Bool
-    let stringFormatter = PrettyPrintedStringFormatter()
+    let stringFormatter = OutputFormatter(outputOption: .prettyPrinted, parameterize: false)
 
     init(encoded: Bool) {
         self.encoded = encoded

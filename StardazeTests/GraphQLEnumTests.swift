@@ -19,7 +19,7 @@ final class GraphQLEnumTests {
         case two
     }
 
-    let unencodedStringFormatter = PrettyPrintedStringFormatter()
+    let unencodedStringFormatter = OutputFormatter(outputOption: .prettyPrinted, parameterize: false)
 
     func testStringFormatting() {
         XCTAssertEqual(GraphQLEnum(TestColor.red).accept(visitor: unencodedStringFormatter), "red")

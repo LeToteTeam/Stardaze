@@ -80,7 +80,25 @@ final class DocumentTests: XCTestCase {
 
         XCTAssertEqual(copy.stringify(format: .compact),
                        "query=query ProductList($count: Int) { products } fragment idFragment on Product { id }" +
-            "fragment titleFragment on Product { title }&operationName=ProductList&variables={ \"count\": 10 }")
+            " fragment titleFragment on Product { title }&operationName=ProductList&variables={ \"count\": 10 }")
+
+        guard let queryString: String = copy.parameterize(format: .prettyPrinted)["query"] as? String else {
+            XCTFail()
+            return
+        }
+
+        XCTAssertEqual(queryString,
+            "query ProductList($count: Int) {" +
+                "\n\tproducts" +
+            "\n}" +
+            "\n" +
+            "\nfragment idFragment on Product {" +
+                "\n\tid" +
+            "\n}" +
+            "\n" +
+            "\nfragment titleFragment on Product {" +
+                "\n\ttitle" +
+            "\n}")
     }
 
     func testEncodedParametersRepresentation() {

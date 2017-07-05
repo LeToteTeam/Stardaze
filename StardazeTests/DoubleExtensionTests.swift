@@ -10,7 +10,7 @@
 import XCTest
 
 final class DoubleExtensionTests: XCTestCase {
-    let unencodedStringFormatter = PrettyPrintedStringFormatter()
+    let unencodedStringFormatter = OutputFormatter(outputOption: .prettyPrinted, parameterize: false)
     func testStringFormatting() {
         XCTAssertEqual(5.324.accept(visitor: unencodedStringFormatter), "5.324")
         XCTAssertEqual(1.0.accept(visitor: unencodedStringFormatter), "1.0")

@@ -10,7 +10,7 @@
 import XCTest
 
 final class FragmentTests: XCTestCase {
-    let unencodedStringFormatter = PrettyPrintedStringFormatter()
+    let unencodedStringFormatter = OutputFormatter(outputOption: .prettyPrinted, parameterize: false)
     let testFragment = Fragment(name: "testFragment", type: "TestObject", fields: ["id"])
 
     func testUserDefinitionRepresentation() {

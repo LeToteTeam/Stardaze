@@ -13,13 +13,13 @@
  */
 public struct Document {
     private let compactParametersFormatter = CompactParametersFormatter(encoded: false)
-    private let compactStringFormatter = CompactStringFormatter(encoded: false)
+    private let compactStringFormatter = OutputFormatter(outputOption: .compact, parameterize: false)
     private let encodedParametersFormatter = CompactParametersFormatter(encoded: true)
-    private let encodedStringFormatter = CompactStringFormatter(encoded: true)
+    private let encodedStringFormatter = OutputFormatter(outputOption: .encoded, parameterize: false)
     internal var fragments: [Fragment]?
     internal let queryOperation: QueryOperation
     private let unencodedParametersFormatter = PrettyPrintedParametersFormatter()
-    private let unecodedStringFormatter = PrettyPrintedStringFormatter()
+    private let unecodedStringFormatter = OutputFormatter(outputOption: .prettyPrinted, parameterize: false)
 
     /**
      The primary initializer. The query operation should be fully formed before passing it in here.

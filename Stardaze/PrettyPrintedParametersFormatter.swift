@@ -7,7 +7,7 @@
 //
 
 internal struct PrettyPrintedParametersFormatter: Visitor {
-    let stringFormatter = PrettyPrintedStringFormatter()
+    let stringFormatter = OutputFormatter(outputOption: .prettyPrinted, parameterize: false)
 
     internal func visit(_: Argument) -> [String : Any] {
         return [:]

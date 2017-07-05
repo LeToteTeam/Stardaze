@@ -14,7 +14,7 @@ final class FieldTests: XCTestCase {
         case brown
     }
 
-    let unencodedStringFormatter = PrettyPrintedStringFormatter()
+    let unencodedStringFormatter = OutputFormatter(outputOption: .prettyPrinted, parameterize: false)
     let testField = Field(name: "test_field")
 
     func testUserRepresentation() {
