@@ -10,7 +10,7 @@
 import XCTest
 
 final class GraphQLNullTests: XCTestCase {
-    let unencodedStringFormatter = OutputFormatter(outputOption: .prettyPrinted, parameterize: false)
+    let unencodedStringFormatter = OutputFormatter(outputOption: .prettyPrinted)
 
     func testStringFormatting() {
         XCTAssertEqual((nil as GraphQLNull).accept(visitor: unencodedStringFormatter), "null")

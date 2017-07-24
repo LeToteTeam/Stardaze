@@ -12,14 +12,14 @@
  from here.
  */
 public struct Document {
-    private let compactParametersFormatter = OutputFormatter(outputOption: .compact, parameterize: true)
-    private let compactStringFormatter = OutputFormatter(outputOption: .compact, parameterize: false)
-    private let encodedParametersFormatter = OutputFormatter(outputOption: .encoded, parameterize: true)
-    private let encodedStringFormatter = OutputFormatter(outputOption: .encoded, parameterize: false)
+    private let compactParametersFormatter = OutputFormatter(outputOption: .compact)
+    private let compactStringFormatter = OutputFormatter(outputOption: .compact)
+    private let encodedParametersFormatter = OutputFormatter(outputOption: .encoded)
+    private let encodedStringFormatter = OutputFormatter(outputOption: .encoded)
     internal var fragments: [Fragment]?
     internal let queryOperation: QueryOperation
-    private let unencodedParametersFormatter = OutputFormatter(outputOption: .prettyPrinted, parameterize: true)
-    private let unecodedStringFormatter = OutputFormatter(outputOption: .prettyPrinted, parameterize: false)
+    private let unencodedParametersFormatter = OutputFormatter(outputOption: .prettyPrinted)
+    private let unecodedStringFormatter = OutputFormatter(outputOption: .prettyPrinted)
 
     /**
      The primary initializer. The query operation should be fully formed before passing it in here.

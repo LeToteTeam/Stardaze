@@ -8,11 +8,9 @@
 
 internal struct OutputFormatter: Visitor {
     private var outputOption: OutputOption
-    private var parameterize: Bool
 
-    internal init(outputOption: OutputOption, parameterize: Bool) {
+    internal init(outputOption: OutputOption) {
         self.outputOption = outputOption
-        self.parameterize = parameterize
     }
 
     private func fragmentContents(fragment: Fragment, depth: Int) -> String {
@@ -25,86 +23,79 @@ internal struct OutputFormatter: Visitor {
         return finishedString
     }
 
-    private func makeCompactDocumentString(document: Document) -> String {
-        let transformedQuery =
-            NSMutableString(string: visit(document.queryOperation)
-                .replacingOccurrences(of: ",", with: ""))
+    private func makeCondensedQuery(document: Document) -> NSMutableString {
+        var query =  visit(document.queryOperation)
 
         if let fragments = document.fragments {
-            let transformedFragments =
-                NSMutableString(string: visit(fragments)
-                    .replacingOccurrences(of: ",", with: ""))
+            let fragments = visit(fragments)
 
-            transformedFragments.condenseWhitespace()
-
-            transformedQuery.append(" ")
-            transformedQuery.append(String(transformedFragments))
+            query.append(" ")
+            query.append(fragments)
         }
 
-        transformedQuery.condenseWhitespace()
+        let condensedQuery = NSMutableString(string: query)
+        condensedQuery.condenseWhitespace()
 
-        guard let queryString = transformedQuery.addingPercentEncoding(withAllowedCharacters:
+        return condensedQuery
+    }
+
+    private func makeCompactDocumentString(document: Document) -> String {
+        let condensedQuery = makeCondensedQuery(document: document)
+
+        guard let strippedQuery = condensedQuery.addingPercentEncoding(withAllowedCharacters:
             CharacterSet.urlQueryAllowed) else {
                 return ""
         }
 
-        guard let operationName = document.queryOperation.name?.addingPercentEncoding(withAllowedCharacters:
-            CharacterSet.urlQueryAllowed) else {
-                return "query=\(queryString)"
+        let queryComponent = "query=\(outputOption == .compact ? String(condensedQuery) : strippedQuery)"
+
+        let operationNameComponent: String
+
+        if let operationName = document.queryOperation.name {
+            operationNameComponent = "&operationName=\(operationName)"
+        } else {
+            operationNameComponent = ""
         }
 
-        let variablesString: String
+        let variablesComponent: String
 
         if let variableDefinitionList = document.queryOperation.variableDefinitions {
-            variablesString =
-                makeReadableVariableValueListString(variableDefinitionList:
-                    variableDefinitionList)
-        } else {
-            variablesString = ""
-        }
+            let variablesString = makeReadableVariableValueListString(variableDefinitionList: variableDefinitionList)
 
-        let transformedVariables = NSMutableString(string: variablesString)
+            let transformedVariables = NSMutableString(string: variablesString)
 
-        transformedVariables.condenseWhitespace()
+            transformedVariables.condenseWhitespace()
 
-        if outputOption == .encoded {
-            guard let variablesString =
-                transformedVariables.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) else {
-                    return "query=\(queryString)&operationName=\(operationName)"
+            if outputOption == .encoded {
+                if let encodedVariables =
+                    transformedVariables.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) {
+                        variablesComponent = "&variables=\(encodedVariables)"
+                } else {
+                    variablesComponent = ""
+                }
+            } else {
+                variablesComponent = "&variables=\(String(transformedVariables))"
             }
-
-            return "query=\(queryString)&operationName=\(operationName)&variables=\(variablesString)"
         } else {
-            return "query=\(transformedQuery)&operationName=\(operationName)&variables=\(transformedVariables)"
+            variablesComponent = ""
         }
+
+        return "\(queryComponent)\(operationNameComponent)\(variablesComponent)"
     }
 
     private func makeCompactDocumentParameters(document: Document) -> [String: Any] {
-        let transformedQuery =
-            NSMutableString(string: visit(document.queryOperation).replacingOccurrences(of: ",",
-                                                                                                        with: ""))
-
-        transformedQuery.condenseWhitespace()
-
-        if let fragments = document.fragments {
-            let transformedFragments =
-                NSMutableString(string: visit(fragments).replacingOccurrences(of: ",", with: ""))
-            transformedFragments.condenseWhitespace()
-
-            transformedQuery.append(" ")
-            transformedQuery.append(String(transformedFragments))
-        }
+        let condensedQuery = makeCondensedQuery(document: document)
 
         var parameters: [String: String]
         if outputOption == .encoded {
-            guard let queryString = transformedQuery.addingPercentEncoding(withAllowedCharacters:
+            guard let queryString = condensedQuery.addingPercentEncoding(withAllowedCharacters:
                 CharacterSet.urlQueryAllowed) else {
                     return [:]
             }
 
             parameters = ["query": queryString]
         } else {
-            parameters = ["query": transformedQuery as String]
+            parameters = ["query": condensedQuery as String]
         }
 
         if outputOption == .encoded {
@@ -128,7 +119,7 @@ internal struct OutputFormatter: Visitor {
             if outputOption == .encoded {
                 if let variablesString = variablesStripped.addingPercentEncoding(withAllowedCharacters:
                     CharacterSet.urlQueryAllowed) {
-                    parameters["variables"] = variablesString as String
+                        parameters["variables"] = variablesString as String
                 }
             } else {
                 parameters["variables"] = variablesStripped as String
@@ -136,6 +127,54 @@ internal struct OutputFormatter: Visitor {
         }
 
         return parameters
+    }
+
+    private func makePrettyPrintedDocumentParameters(document: Document) -> [String: Any] {
+        let transformedQuery =
+            NSMutableString(string: visit(document.queryOperation))
+
+        if let fragments = document.fragments {
+            let transformedFragments =
+                NSMutableString(string: visit(fragments))
+
+            transformedQuery.append("\n\n")
+            transformedQuery.append(String(transformedFragments))
+        }
+        var parameters  = ["query": String(transformedQuery)]
+
+        if let name = document.queryOperation.name {
+            parameters["operationName"] = name
+        }
+
+        if let variablesDefinitionList = document.queryOperation.variableDefinitions {
+            let variablesMinusCommas =
+                makeReadableVariableValueListString(variableDefinitionList: variablesDefinitionList)
+
+            let transformedVariables = NSMutableString(string: variablesMinusCommas)
+
+            parameters["variables"] = String(transformedVariables)
+        }
+
+        return parameters
+    }
+
+    private func makePrettyPrintedDocumentString(document: Document) -> String {
+        var finishedString = visit(document.queryOperation)
+        if let fragments = document.fragments, fragments.count > 0 {
+            for fragment in fragments {
+                finishedString.append("\n\n")
+                finishedString.append(visit(fragment))
+            }
+        }
+
+        if let variableDefinitionList = document.queryOperation.variableDefinitions {
+            finishedString.append("\n\n")
+
+            finishedString.append(makeReadableVariableValueListString(variableDefinitionList:
+                variableDefinitionList))
+        }
+
+        return finishedString
     }
 
     private func makeReadableSingleLineString(receiverList: [Receiver]) -> String {
@@ -301,22 +340,7 @@ internal struct OutputFormatter: Visitor {
         if outputOption == .compact || outputOption == .encoded {
             return makeCompactDocumentString(document: document)
         } else {
-            var finishedString = visit(document.queryOperation)
-            if let fragments = document.fragments, fragments.count > 0 {
-                for fragment in fragments {
-                    finishedString.append("\n\n")
-                    finishedString.append(visit(fragment))
-                }
-            }
-
-            if let variableDefinitionList = document.queryOperation.variableDefinitions {
-                finishedString.append("\n\n")
-
-                finishedString.append(makeReadableVariableValueListString(variableDefinitionList:
-                    variableDefinitionList))
-            }
-
-            return finishedString
+            return makePrettyPrintedDocumentString(document: document)
         }
     }
 
@@ -324,33 +348,7 @@ internal struct OutputFormatter: Visitor {
         if outputOption == .compact || outputOption == .encoded {
             return makeCompactDocumentParameters(document: document)
         } else {
-            let transformedQuery =
-                NSMutableString(string: visit(document.queryOperation).replacingOccurrences(of: ",",
-                                                                                            with: ""))
-
-            if let fragments = document.fragments {
-                let transformedFragments =
-                    NSMutableString(string: visit(fragments).replacingOccurrences(of: ",", with: ""))
-
-                transformedQuery.append("\n\n")
-                transformedQuery.append(String(transformedFragments))
-            }
-            var parameters  = ["query": String(transformedQuery)]
-
-            if let name = document.queryOperation.name {
-                parameters["operationName"] = name
-            }
-
-            if let variablesDefinitionList = document.queryOperation.variableDefinitions {
-                let variablesMinusCommas =
-                    makeReadableVariableValueListString(variableDefinitionList: variablesDefinitionList)
-
-                let transformedVariables = NSMutableString(string: variablesMinusCommas)
-
-                parameters["variables"] = String(transformedVariables)
-            }
-
-            return parameters
+            return makePrettyPrintedDocumentParameters(document: document)
         }
     }
 

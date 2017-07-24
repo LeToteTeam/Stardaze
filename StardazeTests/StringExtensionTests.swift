@@ -10,7 +10,7 @@
 import XCTest
 
 final class StringExtensionTests: XCTestCase {
-    let unencodedStringFormatter = OutputFormatter(outputOption: .prettyPrinted, parameterize: false)
+    let unencodedStringFormatter = OutputFormatter(outputOption: .prettyPrinted)
 
     func testStringFormatting() {
         XCTAssertEqual("hello".accept(visitor: unencodedStringFormatter), "\"hello\"")

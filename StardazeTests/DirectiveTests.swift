@@ -10,7 +10,7 @@
 import XCTest
 
 final class DirectiveTests: XCTestCase {
-    let stringFormatter = OutputFormatter(outputOption: .prettyPrinted, parameterize: false)
+    let stringFormatter = OutputFormatter(outputOption: .prettyPrinted)
     func testDeprecated() {
         XCTAssertEqual(Directive.deprecated(Variable("deprecationReason")).accept(visitor: stringFormatter),
                        "@deprecated(reason: $deprecationReason)")
