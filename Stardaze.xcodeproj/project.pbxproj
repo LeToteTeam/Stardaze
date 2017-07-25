@@ -156,19 +156,19 @@
 				7BA2DF711E82EA9B008232CC /* GraphQLList.swift */,
 				7BA2DF611E81F6EA008232CC /* GraphQLNull.swift */,
 				7BA2DF731E82EB78008232CC /* GraphQLObject.swift */,
+				7B5A07271E84603A005509B3 /* GraphQLValueError.swift */,
 				7B71DC301E4A856A0081790A /* Info.plist */,
 				7BA2DF6D1E82E7FA008232CC /* IntExtension.swift */,
 				7B3B2B231E7857690086F169 /* NSMutableStringExtension.swift */,
+				7B792B2B1E6F392C00DE404E /* OutputFormatter.swift */,
+				7BDCB3501EFD8BCC00530C80 /* OutputOption.swift */,
 				7BF0BFAB1E4B9DE000E56EDE /* QueryOperation.swift */,
 				7BE692B41E71CBA50097874B /* Receiver.swift */,
 				7B71DC2F1E4A856A0081790A /* Stardaze.h */,
 				7BA2DF751E82EC1D008232CC /* StringExtension.swift */,
-				7B792B2B1E6F392C00DE404E /* OutputFormatter.swift */,
 				7BF0BFB31E4BDA3300E56EDE /* Variable.swift */,
 				7BF0BFC11E4CD67600E56EDE /* VariableDefinition.swift */,
 				7B792B291E6F378300DE404E /* Visitor.swift */,
-				7B5A07271E84603A005509B3 /* GraphQLValueError.swift */,
-				7BDCB3501EFD8BCC00530C80 /* OutputOption.swift */,
 			);
 			path = Stardaze;
 			sourceTree = "<group>";
