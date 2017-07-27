@@ -23,19 +23,41 @@ internal struct OutputFormatter: Visitor {
         return finishedString
     }
 
-    private func makeCondensedQuery(document: Document, encoded: Bool) -> String {
-        var query =  visit(document.queryOperation)
+    private func makeCompactDocumentParameters(document: Document) -> [String: Any] {
+        var parameters: [String: Any] = ["query":
+            makeCondensedQuery(document: document, encoded: outputOption == .encoded)]
 
-        if let fragments = document.fragments {
-            let fragments = visit(fragments)
-
-            query.append(" ")
-            query.append(fragments)
+        if let operationName = document.queryOperation.name {
+            parameters["operationName"] = operationName
         }
 
-        let condensedQuery = query.condensingWhitespace()
+        if let variables = makeCondensedVariables(document: document, encoded: outputOption == .encoded) {
+            parameters["variables"] = variables
+        }
 
-        return outputOption == .encoded ? condensedQuery.urlEncoded() : condensedQuery
+        return parameters
+    }
+
+    private func makeCompactDocumentString(document: Document) -> String {
+        let queryComponent = "query=\(makeCondensedQuery(document: document, encoded: outputOption == .encoded))"
+
+        let operationNameComponent: String = {
+            if let operationName = document.queryOperation.name {
+                return "&operationName=\(operationName)"
+            } else {
+                return ""
+            }
+        }()
+
+        let variablesComponent: String = {
+            if let variables = makeCondensedVariables(document: document, encoded: outputOption == .encoded) {
+                return "&variables=\(variables)"
+            } else {
+                return ""
+            }
+        }()
+
+        return "\(queryComponent)\(operationNameComponent)\(variablesComponent)"
     }
 
     private func makeCondensedVariables(document: Document, encoded: Bool) -> String? {
@@ -58,57 +80,19 @@ internal struct OutputFormatter: Visitor {
         }
     }
 
-    private func makeCompactDocumentString(document: Document) -> String {
-        let condensedQuery = makeCondensedQuery(document: document, encoded: outputOption == .encoded)
+    private func makeCondensedQuery(document: Document, encoded: Bool) -> String {
+        var query =  visit(document.queryOperation)
 
-        let queryComponent = "query=\(condensedQuery)"
+        if let fragments = document.fragments {
+            let fragments = visit(fragments)
 
-        let operationNameComponent: String = {
-            if let operationName = document.queryOperation.name {
-                return "&operationName=\(operationName)"
-            } else {
-                return ""
-            }
-        }()
-
-        let variablesComponent: String = {
-            if let variables = makeCondensedVariables(document: document, encoded: outputOption == .encoded) {
-                return "&variables=\(variables)"
-            } else {
-                return ""
-            }
-        }()
-
-        return "\(queryComponent)\(operationNameComponent)\(variablesComponent)"
-    }
-
-    private func makeCompactDocumentParameters(document: Document) -> [String: Any] {
-        let condensedQuery = makeCondensedQuery(document: document, encoded: outputOption == .encoded)
-
-        var parameters: [String: Any] = ["query": condensedQuery]
-
-        if let operationName = document.queryOperation.name {
-            parameters["operationName"] = operationName
+            query.append(" ")
+            query.append(fragments)
         }
 
-        if let variables = makeCondensedVariables(document: document, encoded: outputOption == .encoded) {
-            parameters["variables"] = variables
-        }
+        let condensedQuery = query.condensingWhitespace()
 
-        return parameters
-    }
-
-    private func makePrettyPrintedQuery(document: Document) -> String {
-        var query = visit(document.queryOperation)
-
-        if let fragments = document.fragments, fragments.count > 0 {
-            let fragmentString = visit(fragments)
-
-            query.append("\n\n")
-            query.append(fragmentString)
-        }
-
-        return query
+        return outputOption == .encoded ? condensedQuery.urlEncoded() : condensedQuery
     }
 
     private func makePrettyPrintedDocumentParameters(document: Document) -> [String: Any] {
@@ -137,6 +121,19 @@ internal struct OutputFormatter: Visitor {
         }
 
         return finishedString
+    }
+
+    private func makePrettyPrintedQuery(document: Document) -> String {
+        var query = visit(document.queryOperation)
+
+        if let fragments = document.fragments, fragments.count > 0 {
+            let fragmentString = visit(fragments)
+
+            query.append("\n\n")
+            query.append(fragmentString)
+        }
+
+        return query
     }
 
     private func makeReadableSingleLineString(receiverList: [Receiver]) -> String {
