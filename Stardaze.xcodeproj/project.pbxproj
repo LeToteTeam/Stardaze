@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7B3B2B241E7857690086F169 /* NSMutableStringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B3B2B231E7857690086F169 /* NSMutableStringExtension.swift */; };
 		7B5A07181E831467005509B3 /* GraphQLNullTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5A07171E831467005509B3 /* GraphQLNullTests.swift */; };
 		7B5A071A1E83173C005509B3 /* BoolExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5A07191E83173C005509B3 /* BoolExtensionTests.swift */; };
 		7B5A071C1E8319C2005509B3 /* DoubleExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5A071B1E8319C2005509B3 /* DoubleExtensionTests.swift */; };
@@ -60,7 +59,6 @@
 
 /* Begin PBXFileReference section */
 		7B35E1581E847A47000E68D5 /* Example.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Example.playground; sourceTree = "<group>"; };
-		7B3B2B231E7857690086F169 /* NSMutableStringExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSMutableStringExtension.swift; sourceTree = "<group>"; };
 		7B5A07171E831467005509B3 /* GraphQLNullTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GraphQLNullTests.swift; sourceTree = "<group>"; };
 		7B5A07191E83173C005509B3 /* BoolExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoolExtensionTests.swift; sourceTree = "<group>"; };
 		7B5A071B1E8319C2005509B3 /* DoubleExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleExtensionTests.swift; sourceTree = "<group>"; };
@@ -146,26 +144,20 @@
 			isa = PBXGroup;
 			children = (
 				7BF0BFAD1E4B9E0400E56EDE /* Argument.swift */,
-				7BA2DF631E81F9FC008232CC /* BoolExtension.swift */,
 				7BF0BFC31E4CF32D00E56EDE /* Directive.swift */,
 				7BF0BFBF1E4BEC4800E56EDE /* Document.swift */,
-				7BA2DF651E81FA42008232CC /* DoubleExtension.swift */,
 				7B71DC461E4A85990081790A /* Field.swift */,
 				7BF0BFAF1E4BA41900E56EDE /* Fragment.swift */,
 				7BA2DF691E820263008232CC /* GraphQLEnum.swift */,
 				7BA2DF711E82EA9B008232CC /* GraphQLList.swift */,
 				7BA2DF611E81F6EA008232CC /* GraphQLNull.swift */,
-				7BA2DF731E82EB78008232CC /* GraphQLObject.swift */,
-				7B5A07271E84603A005509B3 /* GraphQLValueError.swift */,
 				7B71DC301E4A856A0081790A /* Info.plist */,
-				7BA2DF6D1E82E7FA008232CC /* IntExtension.swift */,
-				7B3B2B231E7857690086F169 /* NSMutableStringExtension.swift */,
 				7B792B2B1E6F392C00DE404E /* OutputFormatter.swift */,
 				7BDCB3501EFD8BCC00530C80 /* OutputOption.swift */,
 				7BF0BFAB1E4B9DE000E56EDE /* QueryOperation.swift */,
 				7BE692B41E71CBA50097874B /* Receiver.swift */,
 				7B71DC2F1E4A856A0081790A /* Stardaze.h */,
-				7BA2DF751E82EC1D008232CC /* StringExtension.swift */,
+				7BC8E6B11F2A5954005B4E21 /* Internal */,
 				7BF0BFB31E4BDA3300E56EDE /* Variable.swift */,
 				7BF0BFC11E4CD67600E56EDE /* VariableDefinition.swift */,
 				7B792B291E6F378300DE404E /* Visitor.swift */,
@@ -194,6 +186,19 @@
 				7B906E0A1E4E6D88006C0337 /* VariableDefinitionTests.swift */,
 			);
 			path = StardazeTests;
+			sourceTree = "<group>";
+		};
+		7BC8E6B11F2A5954005B4E21 /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				7BA2DF6D1E82E7FA008232CC /* IntExtension.swift */,
+				7B5A07271E84603A005509B3 /* GraphQLValueError.swift */,
+				7BA2DF731E82EB78008232CC /* GraphQLObject.swift */,
+				7BA2DF651E81FA42008232CC /* DoubleExtension.swift */,
+				7BA2DF631E81F9FC008232CC /* BoolExtension.swift */,
+				7BA2DF751E82EC1D008232CC /* StringExtension.swift */,
+			);
+			name = Internal;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -310,7 +315,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				7B792B2C1E6F392C00DE404E /* OutputFormatter.swift in Sources */,
-				7B3B2B241E7857690086F169 /* NSMutableStringExtension.swift in Sources */,
 				7BF0BFAC1E4B9DE000E56EDE /* QueryOperation.swift in Sources */,
 				7BA2DF6E1E82E7FA008232CC /* IntExtension.swift in Sources */,
 				7BF0BFB01E4BA41900E56EDE /* Fragment.swift in Sources */,
