@@ -12,8 +12,8 @@ internal extension String {
     }
 
     internal func condensingWhitespace() -> String {
-        let start = self.utf16.startIndex
-        let end = self.utf16.endIndex
+        let start = utf16.startIndex
+        let end = utf16.endIndex
         let distance = start.distance(to: end)
         let range = NSRange(location: 0, length: distance)
 

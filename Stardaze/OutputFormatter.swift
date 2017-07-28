@@ -61,23 +61,20 @@ internal struct OutputFormatter: Visitor {
     }
 
     private func makeCondensedVariables(document: Document, encoded: Bool) -> String? {
-        if let variablesDefinitionList = document.queryOperation.variableDefinitions {
-            let variables = makeReadableVariableValueListString(variableDefinitionList:
-                variablesDefinitionList).condensingWhitespace()
-
-            if encoded {
-                if let encodedVariables = variables.addingPercentEncoding(withAllowedCharacters:
-                    CharacterSet.urlQueryAllowed) {
-                    return encodedVariables
-                } else {
-                    return nil
-                }
-            } else {
-                return variables
-            }
-        } else {
+        guard let variablesDefinitionList = document.queryOperation.variableDefinitions else {
             return nil
         }
+
+        let variables = makeReadableVariableValueListString(variableDefinitionList:
+            variablesDefinitionList).condensingWhitespace()
+
+        guard encoded,
+            let encodedVariables = variables.addingPercentEncoding(withAllowedCharacters:
+                CharacterSet.urlQueryAllowed) else {
+                    return variables
+        }
+
+        return encodedVariables
     }
 
     private func makeCondensedQuery(document: Document, encoded: Bool) -> String {
@@ -139,7 +136,7 @@ internal struct OutputFormatter: Visitor {
     private func makeReadableSingleLineString(receiverList: [Receiver]) -> String {
         var finishedString = ""
 
-        for (index, receiver) in zip(0..<receiverList.count, receiverList) {
+        for (index, receiver) in zip(0 ..< receiverList.count, receiverList) {
             if index != 0 {
                 finishedString.append(", ")
             }
@@ -215,7 +212,7 @@ internal struct OutputFormatter: Visitor {
     private func makeReadableString(fieldList: [Field], atDepth depth: Int) -> String {
         var finishedString = ""
 
-        for (index, field) in zip(0..<fieldList.count, fieldList) {
+        for (index, field) in zip(0 ..< fieldList.count, fieldList) {
             if index != 0 {
                 finishedString.append("\n")
             }
@@ -229,7 +226,7 @@ internal struct OutputFormatter: Visitor {
     private func makeReadableString(fragmentList: [Fragment], atDepth depth: Int) -> String {
         var finishedString = ""
 
-        for (index, fragment) in zip(0..<fragmentList.count, fragmentList) {
+        for (index, fragment) in zip(0 ..< fragmentList.count, fragmentList) {
             if index != 0 {
                 finishedString.append("\n")
             }
@@ -261,7 +258,7 @@ internal struct OutputFormatter: Visitor {
     internal func makeReadableVariableValueListString(variableDefinitionList: [VariableDefinition]) -> String {
         var finishedString = "{\n"
 
-        for (index, variableDefinition) in zip(0..<variableDefinitionList.count, variableDefinitionList) {
+        for (index, variableDefinition) in zip(0 ..< variableDefinitionList.count, variableDefinitionList) {
             if index != 0 {
                 finishedString.append(",\n")
             }
@@ -338,7 +335,7 @@ internal struct OutputFormatter: Visitor {
     internal func visit(_ fragments: [Fragment]) -> String {
         var finishedString = ""
 
-        for (index, fragment) in zip((0..<fragments.count), fragments) {
+        for (index, fragment) in zip((0 ..< fragments.count), fragments) {
             if index != 0 {
                 finishedString.append("\n\n")
             }
@@ -420,7 +417,7 @@ internal struct OutputFormatter: Visitor {
     }
 
     private func space(string: inout String, toDepth depth: Int) {
-        for _ in 0..<depth {
+        for _ in 0 ..< depth {
             string.append("\t")
         }
     }
