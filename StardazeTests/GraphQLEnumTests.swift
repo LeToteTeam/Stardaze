@@ -9,7 +9,7 @@
 @testable import Stardaze
 import XCTest
 
-final class GraphQLEnumTests {
+final class GraphQLEnumTests: XCTestCase {
     enum TestColor: String {
         case red
     }
@@ -19,7 +19,7 @@ final class GraphQLEnumTests {
         case two
     }
 
-    let unencodedStringFormatter = PrettyPrintedStringFormatter()
+    let unencodedStringFormatter = OutputFormatter(outputOption: .prettyPrinted)
 
     func testStringFormatting() {
         XCTAssertEqual(GraphQLEnum(TestColor.red).accept(visitor: unencodedStringFormatter), "red")

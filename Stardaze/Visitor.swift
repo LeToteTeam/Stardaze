@@ -7,39 +7,35 @@
 //
 
 internal protocol Visitor {
-    associatedtype T
+    func visit(_: Argument) -> String
 
-    func visit(_: Argument) -> T
+    func visit(_: Bool) -> String
 
-    func visit(_: Bool) -> T
+    func visit(_: Directive) -> String
 
-    func visit(_: Directive) -> T
+    func visit(_: Double) -> String
 
-    func visit(_: Document) -> T
+    func visit<EnumType>(_: EnumType) -> String where EnumType: RawRepresentable, EnumType.RawValue == String
 
-    func visit(_: Double) -> T
+    func visit(_: Field) -> String
 
-    func visit<V>(_: V) -> T where V: RawRepresentable, V.RawValue == String
+    func visit(_: Fragment) -> String
 
-    func visit(_: Field) -> T
+    func visit(_: [Fragment]) -> String
 
-    func visit(_: Fragment) -> T
+    func visit(_: Int) -> String
 
-    func visit(_: [Fragment]) -> T
+    func visit(_: GraphQLNull) -> String
 
-    func visit(_: Int) -> T
+    func visit(_: QueryOperation) -> String
 
-    func visit(_: GraphQLNull) -> T
+    func visit(_: [Receiver]) -> String
 
-    func visit(_: QueryOperation) -> T
+    func visit(_: String) -> String
 
-    func visit(_: [Receiver]) -> T
+    func visit(_: [String: Receiver]) -> String
 
-    func visit(_: String) -> T
+    func visit(_: Variable) -> String
 
-    func visit(_: [String: Receiver]) -> T
-
-    func visit(_: Variable) -> T
-
-    func visit(_: VariableDefinition) -> T
+    func visit(_: VariableDefinition) -> String
 }

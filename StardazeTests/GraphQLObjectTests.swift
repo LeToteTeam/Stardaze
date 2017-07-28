@@ -9,10 +9,11 @@
 @testable import Stardaze
 import XCTest
 
-final class GraphQLObjectTests {
-    let unencodedStringFormatter = PrettyPrintedStringFormatter()
+final class GraphQLObjectTests: XCTestCase {
+    let unencodedStringFormatter = OutputFormatter(outputOption: .prettyPrinted)
 
     func testStringFormatting() {
-        XCTAssertEqual(GraphQLObject(["hello": "world"]).accept(visitor: unencodedStringFormatter), "{hello: \"world\"")
+        XCTAssertEqual(GraphQLObject(["hello": "world"]).accept(visitor:
+            unencodedStringFormatter), "{hello: \"world\"}")
     }
 }

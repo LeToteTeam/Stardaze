@@ -120,7 +120,7 @@ public struct VariableDefinition {
 }
 
 extension VariableDefinition: Receiver {
-    internal func accept<V: Visitor>(visitor: V) -> V.T {
+    internal func accept(visitor: Visitor) -> String {
         return visitor.visit(self)
     }
 }

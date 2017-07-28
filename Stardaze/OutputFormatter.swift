@@ -1,12 +1,18 @@
 //
-//  PrettyPrintedStringFormatter.swift
+//  OutputFormatter.swift
 //  Stardaze
 //
 //  Created by William Wilson on 3/7/17.
 //  Copyright © 2017 LeTote. All rights reserved.
 //
 
-internal struct PrettyPrintedStringFormatter: Visitor {
+internal struct OutputFormatter: Visitor {
+    private var outputOption: OutputFormat
+
+    internal init(outputOption: OutputFormat) {
+        self.outputOption = outputOption
+    }
+
     private func fragmentContents(fragment: Fragment, depth: Int) -> String {
         var finishedString = ""
 
@@ -17,10 +23,120 @@ internal struct PrettyPrintedStringFormatter: Visitor {
         return finishedString
     }
 
+    private func makeCompactDocumentParameters(document: Document) -> [String: Any] {
+        var parameters: [String: Any] = ["query":
+            makeCondensedQuery(document: document, encoded: outputOption == .encoded)]
+
+        if let operationName = document.queryOperation.name {
+            parameters["operationName"] = operationName
+        }
+
+        if let variables = makeCondensedVariables(document: document, encoded: outputOption == .encoded) {
+            parameters["variables"] = variables
+        }
+
+        return parameters
+    }
+
+    private func makeCompactDocumentString(document: Document) -> String {
+        let queryComponent = "query=\(makeCondensedQuery(document: document, encoded: outputOption == .encoded))"
+
+        let operationNameComponent: String = {
+            if let operationName = document.queryOperation.name {
+                return "&operationName=\(operationName)"
+            } else {
+                return ""
+            }
+        }()
+
+        let variablesComponent: String = {
+            if let variables = makeCondensedVariables(document: document, encoded: outputOption == .encoded) {
+                return "&variables=\(variables)"
+            } else {
+                return ""
+            }
+        }()
+
+        return "\(queryComponent)\(operationNameComponent)\(variablesComponent)"
+    }
+
+    private func makeCondensedVariables(document: Document, encoded: Bool) -> String? {
+        guard let variablesDefinitionList = document.queryOperation.variableDefinitions else {
+            return nil
+        }
+
+        let variables = makeReadableVariableValueListString(variableDefinitionList:
+            variablesDefinitionList).condensingWhitespace()
+
+        guard encoded,
+            let encodedVariables = variables.addingPercentEncoding(withAllowedCharacters:
+                CharacterSet.urlQueryAllowed) else {
+                    return variables
+        }
+
+        return encodedVariables
+    }
+
+    private func makeCondensedQuery(document: Document, encoded: Bool) -> String {
+        var query =  visit(document.queryOperation)
+
+        if let fragments = document.fragments {
+            let fragments = visit(fragments)
+
+            query.append(" ")
+            query.append(fragments)
+        }
+
+        let condensedQuery = query.condensingWhitespace()
+
+        return outputOption == .encoded ? condensedQuery.urlEncoded() : condensedQuery
+    }
+
+    private func makePrettyPrintedDocumentParameters(document: Document) -> [String: Any] {
+        var parameters = ["query": makePrettyPrintedQuery(document: document)]
+
+        if let name = document.queryOperation.name {
+            parameters["operationName"] = name
+        }
+
+        if let variablesDefinitionList = document.queryOperation.variableDefinitions {
+            let variables = makeReadableVariableValueListString(variableDefinitionList: variablesDefinitionList)
+            parameters["variables"] = variables
+        }
+
+        return parameters as [String: Any]
+    }
+
+    private func makePrettyPrintedDocumentString(document: Document) -> String {
+        var finishedString = makePrettyPrintedQuery(document: document)
+
+        if let variableDefinitionList = document.queryOperation.variableDefinitions {
+            finishedString.append("\n\n")
+
+            finishedString.append(makeReadableVariableValueListString(variableDefinitionList:
+                variableDefinitionList))
+        }
+
+        return finishedString
+    }
+
+    private func makePrettyPrintedQuery(document: Document) -> String {
+        var query = visit(document.queryOperation)
+
+        if let fragments = document.fragments, fragments.count > 0 {
+            let fragmentString = visit(fragments)
+
+            query.append("\n\n")
+            query.append(fragmentString)
+        }
+
+        return query
+    }
+
     private func makeReadableSingleLineString(receiverList: [Receiver]) -> String {
         var finishedString = ""
 
-        for (index, receiver) in zip(0..<receiverList.count, receiverList) {
+        for (index, receiver) in zip(0 ..< receiverList.count, receiverList) {
             if index != 0 {
                 finishedString.append(", ")
             }
@@ -96,7 +212,7 @@ internal struct PrettyPrintedStringFormatter: Visitor {
     private func makeReadableString(fieldList: [Field], atDepth depth: Int) -> String {
         var finishedString = ""
 
-        for (index, field) in zip(0..<fieldList.count, fieldList) {
+        for (index, field) in zip(0 ..< fieldList.count, fieldList) {
             if index != 0 {
                 finishedString.append("\n")
             }
@@ -110,7 +226,7 @@ internal struct PrettyPrintedStringFormatter: Visitor {
     private func makeReadableString(fragmentList: [Fragment], atDepth depth: Int) -> String {
         var finishedString = ""
 
-        for (index, fragment) in zip(0..<fragmentList.count, fragmentList) {
+        for (index, fragment) in zip(0 ..< fragmentList.count, fragmentList) {
             if index != 0 {
                 finishedString.append("\n")
             }
@@ -142,7 +258,7 @@ internal struct PrettyPrintedStringFormatter: Visitor {
     internal func makeReadableVariableValueListString(variableDefinitionList: [VariableDefinition]) -> String {
         var finishedString = "{\n"
 
-        for (index, variableDefinition) in zip(0..<variableDefinitionList.count, variableDefinitionList) {
+        for (index, variableDefinition) in zip(0 ..< variableDefinitionList.count, variableDefinitionList) {
             if index != 0 {
                 finishedString.append(",\n")
             }
@@ -177,21 +293,19 @@ internal struct PrettyPrintedStringFormatter: Visitor {
     }
 
     internal func visit(_ document: Document) -> String {
-        var finishedString = visit(document.queryOperation)
-        if let fragments = document.fragments, fragments.count > 0 {
-            for fragment in fragments {
-                finishedString.append("\n\n")
-                finishedString.append(visit(fragment))
-            }
+        if outputOption == .compact || outputOption == .encoded {
+            return makeCompactDocumentString(document: document)
+        } else {
+            return makePrettyPrintedDocumentString(document: document)
         }
+    }
 
-        if let variableDefinitionList = document.queryOperation.variableDefinitions {
-            finishedString.append("\n\n")
-
-            finishedString.append(makeReadableVariableValueListString(variableDefinitionList: variableDefinitionList))
+    internal func visit(_ document: Document) -> [String: Any] {
+        if outputOption == .compact || outputOption == .encoded {
+            return makeCompactDocumentParameters(document: document)
+        } else {
+            return makePrettyPrintedDocumentParameters(document: document)
         }
-
-        return finishedString
     }
 
     internal func visit(_ double: Double) -> String {
@@ -221,7 +335,11 @@ internal struct PrettyPrintedStringFormatter: Visitor {
     internal func visit(_ fragments: [Fragment]) -> String {
         var finishedString = ""
 
-        for fragment in fragments {
+        for (index, fragment) in zip((0 ..< fragments.count), fragments) {
+            if index != 0 {
+                finishedString.append("\n\n")
+            }
+
             finishedString.append(visit(fragment))
         }
 
@@ -299,7 +417,7 @@ internal struct PrettyPrintedStringFormatter: Visitor {
     }
 
     private func space(string: inout String, toDepth depth: Int) {
-        for _ in 0..<depth {
+        for _ in 0 ..< depth {
             string.append("\t")
         }
     }

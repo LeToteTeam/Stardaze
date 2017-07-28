@@ -25,6 +25,8 @@ func print(title: String, text: CustomStringConvertible) {
 let productList = Field(name: "product_list", alias: "productList")
     .appended(argument: Argument(key: "color", value: Color.red))
     .appended(argument: Argument(key: "limit", value: 20))
+    .appended(argument: Argument(key: "person", value: ["name": "Bill", "age": 30])!)
+    .appended(argument: Argument(key: "ids", value: [1, 2, 3, 4, 5])!)
     .appended(subField: "id")
     .appended(subField: "title")
     .appended(subField: Field(name: "photo", subFields: ["width", "height"]))
@@ -32,8 +34,10 @@ let productList = Field(name: "product_list", alias: "productList")
 let productDocument = Document(queryOperation: QueryOperation(fields: [productList]))
 
 print(title: "Readable String", text: productDocument.stringify(format: .prettyPrinted))
+print(title: "Compact String", text: productDocument.stringify(format: .compact))
 print(title: "Encoded", text: productDocument.stringify(format: .encoded))
 print(title: "Parameters", text: productDocument.parameterize(format: .prettyPrinted))
+print(title: "Compact Parameters", text: productDocument.parameterize(format: .compact))
 print(title: "Encoded Parameters", text: productDocument.parameterize(format: .encoded))
 
 /**
@@ -72,10 +76,11 @@ let countsDefinition = VariableDefinition(key: "counts", type: "[Int]", notNulla
 
 let object = Variable("person")
 let objectDefinition = VariableDefinition(key: "person", type: "Person", value: ["name": "John",
-                                                                                 "age": 15])
+                                                                                 "age": 45])
 
 let variableProductList = Field(name: "product_list",
-                                arguments: [Argument(key: "count", value: count), Argument(key: "person", value: object)],
+                                arguments: [Argument(key: "count", value: count),
+                                            Argument(key: "person", value: object)],
                                 subFields: ["id", "title"])
 
 let variableQuery = QueryOperation(name: "ProductList",

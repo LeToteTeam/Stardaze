@@ -7,5 +7,5 @@
 //
 
 internal protocol Receiver {
-    func accept<V: Visitor>(visitor: V) -> V.T
+    func accept(visitor: Visitor) -> String
 }

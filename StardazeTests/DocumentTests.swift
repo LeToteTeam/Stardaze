@@ -10,15 +10,66 @@ import Stardaze
 import XCTest
 
 final class DocumentTests: XCTestCase {
-    let testDocument = Document(queryOperation: QueryOperation(name: "ProductList",
+    let anonymousTestDocument: Document = {
+        guard let argument = Argument(key: "ids", value: [1, 2, 3, 4]) else {
+            XCTFail()
+            fatalError()
+        }
+        let field = Field(name: "products").appended(argument: argument)
+
+        return Document(queryOperation: QueryOperation(fields: [field]))
+    }()
+
+    let anonymousTestDocumentWithVariables: Document = {
+        let field = Field(name: "products").appended(argument: Argument(key: "ids", value: Variable("ids")))
+
+        guard let variableDefinition = VariableDefinition(key: "ids",
+                                                          type: "[Int]",
+                                                          notNullable: true,
+                                                          value: [1, 2, 3, 4]) else {
+            XCTFail()
+            fatalError()
+        }
+
+        let queryOperation = QueryOperation(fields: [field]).appended(variableDefinition: variableDefinition)
+
+        return Document(queryOperation: queryOperation)
+    }()
+
+    let namedTestDocument = Document(queryOperation: QueryOperation(name: "ProductList",
                                                                variableDefinitions: [
                                                                 VariableDefinition(key: "count",
                                                                                    type: "Int",
                                                                                    value: 10)
         ],
                                                                fields: ["products"]))
-    func testUserRepresentation() {
-        XCTAssertEqual(testDocument.stringify(format: .prettyPrinted),
+
+    func testAnonymousPrettyPrint() {
+        XCTAssertEqual(anonymousTestDocument.stringify(format: .prettyPrinted),
+                       "{" +
+                            "\n\tproducts(ids: [1, 2, 3, 4])" +
+                        "\n}")
+
+        XCTAssertEqual(anonymousTestDocumentWithVariables.stringify(format: .prettyPrinted),
+                        "{" +
+                            "\n\tproducts(ids: $ids)" +
+                        "\n}" +
+                        "\n" +
+                        "\n{" +
+                            "\n\t\"ids\": [1, 2, 3, 4]" +
+                        "\n}")
+
+    }
+
+    func testAnonymousCompact() {
+        XCTAssertEqual(anonymousTestDocument.stringify(format: .compact), "query={ products(ids: [1, 2, 3, 4]) }")
+
+        XCTAssertEqual(anonymousTestDocumentWithVariables.stringify(format: .compact),
+                       "query={ products(ids: $ids) }&variables={ \"ids\": [1, 2, 3, 4] }")
+    }
+
+    func testNamedPrettyPrint() {
+        XCTAssertEqual(namedTestDocument.stringify(format: .prettyPrinted),
                        "query ProductList($count: Int) {" +
                             "\n\tproducts" +
                         "\n}" +
@@ -27,7 +78,7 @@ final class DocumentTests: XCTestCase {
                             "\n\t\"count\": 10" +
                         "\n}")
 
-        let withFragment = testDocument.appended(fragment: Fragment(name: "idFragment",
+        let withFragment = namedTestDocument.appended(fragment: Fragment(name: "idFragment",
                                                                     type: "Product",
                                                                     fields: ["id"]))
 
@@ -45,42 +96,47 @@ final class DocumentTests: XCTestCase {
             "\n}")
     }
 
-    func testCompactStringRepresentation() {
-        XCTAssertEqual(testDocument.stringify(format: .prettyPrinted),
-                       "query ProductList($count: Int) {" +
-                            "\n\tproducts" +
-                        "\n}" +
-                        "\n" +
-                        "\n{" +
-                            "\n\t\"count\": 10" +
-                        "\n}")
+    func testNamedCompact() {
+        XCTAssertEqual(namedTestDocument.stringify(format: .compact),
+                       "query=query ProductList($count: Int) " +
+                        "{ products }&operationName=ProductList&variables={ \"count\": 10 }")
 
-        let withFragment = testDocument.appended(fragment: Fragment(name: "idFragment",
+        let withFragment = namedTestDocument.appended(fragment: Fragment(name: "idFragment",
                                                                     type: "Product",
                                                                     fields: ["id"]))
 
-        XCTAssertEqual(withFragment.stringify(format: .prettyPrinted),
-                       "query ProductList($count: Int) {" +
-                            "\n\tproducts" +
-                        "\n}" +
-                        "\n" +
-                        "\nfragment idFragment on Product {" +
-                            "\n\tid" +
-                        "\n}" +
-                        "\n" +
-                        "\n{" +
-                            "\n\t\"count\": 10" +
-                        "\n}")
+        XCTAssertEqual(withFragment.stringify(format: .compact),
+                       "query=query ProductList($count: Int) { products } " +
+                        "fragment idFragment on Product { id }&operationName=ProductList&variables={ " +
+                        "\"count\": 10 }")
     }
 
     func testAppendingMultipleFragments() {
-        let copy = testDocument.appended(fragments: [
+        let copy = namedTestDocument.appended(fragments: [
             Fragment(name: "idFragment", type: "Product", fields: ["id"]),
             Fragment(name: "titleFragment", type: "Product", fields: ["title"])])
 
         XCTAssertEqual(copy.stringify(format: .compact),
                        "query=query ProductList($count: Int) { products } fragment idFragment on Product { id }" +
-            "fragment titleFragment on Product { title }&operationName=ProductList&variables={ \"count\": 10 }")
+            " fragment titleFragment on Product { title }&operationName=ProductList&variables={ \"count\": 10 }")
+
+        guard let queryString: String = copy.parameterize(format: .prettyPrinted)["query"] as? String else {
+            XCTFail()
+            return
+        }
+
+        XCTAssertEqual(queryString,
+            "query ProductList($count: Int) {" +
+                "\n\tproducts" +
+            "\n}" +
+            "\n" +
+            "\nfragment idFragment on Product {" +
+                "\n\tid" +
+            "\n}" +
+            "\n" +
+            "\nfragment titleFragment on Product {" +
+                "\n\ttitle" +
+            "\n}")
     }
 
     func testEncodedParametersRepresentation() {
@@ -107,7 +163,7 @@ final class DocumentTests: XCTestCase {
         XCTAssertEqual(namedParameters["variables"] as? String, "%7B%20%22count%22:%2010%20%7D")
     }
 
-    func testServerRepresentation() {
+    func testEncodedStringRepresentation() {
         let unnamedDocument = Document(queryOperation: QueryOperation(fields: ["products"]))
             .appended(fragment: Fragment(name: "idFragment", type: "Product", fields: ["id"]))
 

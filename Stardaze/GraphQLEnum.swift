@@ -19,7 +19,7 @@ public struct GraphQLEnum<T> where T: RawRepresentable, T.RawValue == String {
 }
 
 extension GraphQLEnum: Receiver {
-    func accept<V: Visitor>(visitor: V) -> V.T {
+    func accept(visitor: Visitor) -> String {
         return visitor.visit(enumValue)
     }
 }

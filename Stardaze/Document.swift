@@ -12,14 +12,14 @@
  from here.
  */
 public struct Document {
-    private let compactParametersFormatter = CompactParametersFormatter(encoded: false)
-    private let compactStringFormatter = CompactStringFormatter(encoded: false)
-    private let encodedParametersFormatter = CompactParametersFormatter(encoded: true)
-    private let encodedStringFormatter = CompactStringFormatter(encoded: true)
+    private let compactParametersFormatter = OutputFormatter(outputOption: .compact)
+    private let compactStringFormatter = OutputFormatter(outputOption: .compact)
+    private let encodedParametersFormatter = OutputFormatter(outputOption: .encoded)
+    private let encodedStringFormatter = OutputFormatter(outputOption: .encoded)
     internal var fragments: [Fragment]?
     internal let queryOperation: QueryOperation
-    private let unencodedParametersFormatter = PrettyPrintedParametersFormatter()
-    private let unecodedStringFormatter = PrettyPrintedStringFormatter()
+    private let unencodedParametersFormatter = OutputFormatter(outputOption: .prettyPrinted)
+    private let unecodedStringFormatter = OutputFormatter(outputOption: .prettyPrinted)
 
     /**
      The primary initializer. The query operation should be fully formed before passing it in here.
@@ -103,16 +103,16 @@ public struct Document {
      
      - returns: A parameters dictionary.
      */
-    public func parameterize(format: OutputOption) -> [String: Any] {
+    public func parameterize(format: OutputFormat) -> [String: Any] {
         switch format {
         case .compact:
-            return accept(visitor: compactParametersFormatter)
+            return compactParametersFormatter.visit(self)
 
         case .encoded:
-            return accept(visitor: encodedParametersFormatter)
+            return encodedParametersFormatter.visit(self)
 
         case .prettyPrinted:
-            return accept(visitor: unencodedParametersFormatter)
+            return unencodedParametersFormatter.visit(self)
         }
     }
 
@@ -123,22 +123,16 @@ public struct Document {
      
      - returns: A string representation of the document.
      */
-    public func stringify(format: OutputOption) -> String {
+    public func stringify(format: OutputFormat) -> String {
         switch format {
         case .compact:
-            return accept(visitor: compactStringFormatter)
+            return compactStringFormatter.visit(self)
 
         case .encoded:
-            return accept(visitor: encodedStringFormatter)
+            return encodedStringFormatter.visit(self)
 
         case .prettyPrinted:
-            return accept(visitor: unecodedStringFormatter)
+            return unecodedStringFormatter.visit(self)
         }
-    }
-}
-
-extension Document: Receiver {
-    internal func accept<V: Visitor>(visitor: V) -> V.T {
-        return visitor.visit(self)
     }
 }
