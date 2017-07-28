@@ -1,5 +1,5 @@
 //
-//  OutputOption.swift
+//  OutputFormat.swift
 //  Stardaze
 //
 //  Created by William Wilson on 6/23/17.
@@ -9,7 +9,7 @@
 /**
  Used to specify the output format for the stringify and parameterize methods on Document.
  */
-public enum OutputOption {
+public enum OutputFormat {
     /**
      Whitespace is minimized, but the output is not percent encoded.
      */

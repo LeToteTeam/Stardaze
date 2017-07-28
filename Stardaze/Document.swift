@@ -103,7 +103,7 @@ public struct Document {
      
      - returns: A parameters dictionary.
      */
-    public func parameterize(format: OutputOption) -> [String: Any] {
+    public func parameterize(format: OutputFormat) -> [String: Any] {
         switch format {
         case .compact:
             return compactParametersFormatter.visit(self)
@@ -123,7 +123,7 @@ public struct Document {
      
      - returns: A string representation of the document.
      */
-    public func stringify(format: OutputOption) -> String {
+    public func stringify(format: OutputFormat) -> String {
         switch format {
         case .compact:
             return compactStringFormatter.visit(self)

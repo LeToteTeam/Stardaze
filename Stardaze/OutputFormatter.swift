@@ -7,9 +7,9 @@
 //
 
 internal struct OutputFormatter: Visitor {
-    private var outputOption: OutputOption
+    private var outputOption: OutputFormat
 
-    internal init(outputOption: OutputOption) {
+    internal init(outputOption: OutputFormat) {
         self.outputOption = outputOption
     }
 
