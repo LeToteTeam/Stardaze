@@ -50,5 +50,8 @@ final class ArgumentTests: XCTestCase {
 
     func testStringInitializer() {
         XCTAssertEqual(Argument(key: "string", value: "hello").accept(visitor: stringFormatter), "string: \"hello\"")
+
+        XCTAssertEqual(Argument(key: "string", value: "A\tl\\i\nce\"").accept(visitor: stringFormatter),
+                       "string: \"A\\tl\\\\i\\nce\\\"\"")
     }
 }
