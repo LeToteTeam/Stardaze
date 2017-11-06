@@ -12,10 +12,7 @@ internal extension String {
     }
 
     internal func condensingWhitespace() -> String {
-        let start = utf16.startIndex
-        let end = utf16.endIndex
-        let distance = start.distance(to: end)
-        let range = NSRange(location: 0, length: distance)
+        let range = NSRange(startIndex..., in: self)
 
         return whitespaceRegexp.stringByReplacingMatches(in: self,
                                                          options: [],

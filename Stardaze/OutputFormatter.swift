@@ -381,7 +381,17 @@ internal struct OutputFormatter: Visitor {
     }
 
     internal func visit(_ string: String) -> String {
-        return "\"\(string)\""
+        let forwardSlashesHandled = string.replacingOccurrences(of: "\\", with: "\\\\")
+
+        let quotationsHandled = forwardSlashesHandled.replacingOccurrences(of: "\"", with: "\\\"")
+
+        let newlinesHandled = quotationsHandled.replacingOccurrences(of: "\n", with: "\\n")
+
+        let returnsHandled = newlinesHandled.replacingOccurrences(of: "\r", with: "\\r")
+
+        let tabsHandled = returnsHandled.replacingOccurrences(of: "\t", with: "\\t")
+
+        return "\"\(tabsHandled)\""
     }
 
     internal func visit(_ variable: Variable) -> String {
