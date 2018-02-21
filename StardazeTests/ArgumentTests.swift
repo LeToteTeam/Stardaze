@@ -54,4 +54,12 @@ final class ArgumentTests: XCTestCase {
         XCTAssertEqual(Argument(key: "string", value: "A\tl\\i\nce\"").accept(visitor: stringFormatter),
                        "string: \"A\\tl\\\\i\\nce\\\"\"")
     }
+    
+    func testTerribleArgument() {
+        if let argument = Argument(key: "terrible", value: ["hey": 5, "you": [["yo": 1, "there": "yeah"], ["what": 8, "blah": "foo"]]]) {
+            XCTAssertEqual(argument.accept(visitor: stringFormatter), "terrible: {hey: 5, you: [{yo: 1, there: \"yeah\"}, {blah: \"foo\", what: 8}]}")
+        } else {
+            XCTFail()
+        }
+    }
 }
