@@ -90,7 +90,7 @@ public struct Argument {
     public init?(key: String, value: [String: Any]) {
         self.key = key
         self.value = ""
-        var renamedValue = value
+        let renamedValue = value
         do {
             var receiverDict = [String: Receiver]()
             for (key, anyValue) in renamedValue {
